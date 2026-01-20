@@ -66,7 +66,10 @@ elmo-hikes/
 
 
 ## Contributors
+- Nash - BCIT CST Student, Frontend enthusiast with a knack for creative design. Fun fact: Has a collection of over 50 houseplants.
+
 - Yasas Rajapakse - BCIT CST Student in section 1C. Fun fact: Has a collection of over -1 houseplants.
+
 
 ---
 
