@@ -68,6 +68,8 @@ elmo-hikes/
 
 - Yasas Rajapakse - BCIT CST Student in section 1C. Fun fact: Has a collection of over -1 houseplants.
 
+- Austin Moar - BCIT CST Student in section 1C. Fun Fact: I broke my nose twice
+
 ---
 
 ## Acknowledgments
