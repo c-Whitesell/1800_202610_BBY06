@@ -1,1 +1,22 @@
+:root {
+    --primary-color: #fff275;
 
+    --secondary-color: #758e4f;
+
+    --accent-color: #3aaed8;
+}
+body {
+    background-color: var(--primary-color);
+}
+.bg-info {
+    background-color: var(--secondary-color) !important;
+}
+.hero {
+    background-color: var(--primary-color);
+}
+.btn-primary {
+    background-color: var(--accent-color);
+}
+.footer {
+    height: 60px;
+}
