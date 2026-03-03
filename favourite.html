@@ -3,16 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>Favourite</title>
 
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
   </head>
   <body>
+    <h1>Your Favourite Foods</h1>
     <site-navbar></site-navbar>
 
     <div id="map"></div>
-
+    <footer class="navbar bg-info fixed-bottom footer">
+      <div class="container py-3 d-flex justify-content-around">
+        <span class="material-icons">favorite</span>
+        <span class="material-icons">home</span>
+        <span class="material-icons">map</span>
+      </div>
+    </footer>
     <site-footer></site-footer>
     <script type="module" src="/src/mapContent.js"></script>
   </body>
