@@ -4,6 +4,8 @@
     --secondary-color: #758e4f;
 
     --accent-color: #3aaed8;
+
+    --text-color: #4f1802;
 }
 body {
     background-color: var(--primary-color);
@@ -11,8 +13,15 @@ body {
 .bg-info {
     background-color: var(--secondary-color) !important;
 }
+.navbar-brand {
+    color: var(--text-color);
+}
 .hero {
     background-color: var(--primary-color);
+    color: var(--text-color);
+}
+.herotext {
+    color: var(--text-color) !important;
 }
 .btn-primary {
     background-color: var(--accent-color);
