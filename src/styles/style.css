@@ -29,3 +29,6 @@ body {
 .footer {
     height: 60px;
 }
+#map {
+    height: 700px;
+}
