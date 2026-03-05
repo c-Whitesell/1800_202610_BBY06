@@ -1,19 +1,64 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
 
-        <script type="module" src="/src/components/site-navbar.js"></script>
-        <script type="module" src="/src/components/site-footer.js"></script>
-    </head>
-    <body>
-        <site-navbar></site-navbar>
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+  </head>
+  <body>
+    <site-navbar></site-navbar>
 
-        <div id="map"></div>
+    <div id="map"></div>
 
-        <site-footer></site-footer>
-        <script type="module" src="/src/mapContent.js"></script>
-    </body>
+    <!-- Floating Search Field -->
+    <div
+      class="position-absolute top-0 start-50 translate-middle-x mt-3"
+      style="z-index: 1000; width: 300px"
+    >
+      <div class="search-floating-wrapper p-3">
+        <div class="input-group shadow-sm">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn map-search-btn" type="button">🔍</button>
+        </div>
+      </div>
+      <div class="dropdown shadow border-0">
+        <button
+          class="btn btn-white rounded-pill filter-bubble-btn d-flex align-items-center dropdown-toggle border-0"
+          type="button"
+          id="filterDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-sliders2 fs-5"></i>
+          <span class="filter-text ms-2">Filters</span>
+        </button>
+
+        <ul class="dropdown-menu shadow border-0 mt-2">
+          <li><h6 class="dropdown-header">Temp Category</h6></li>
+          <li><a class="dropdown-item" href="#">temp</a></li>
+          <li><a class="dropdown-item" href="#">temp</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><h6 class="dropdown-header">Temp Category</h6></li>
+          <li><a class="dropdown-item" href="#">temp</a></li>
+          <li><a class="dropdown-item" href="#">temp</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item text-danger" href="#">Clear All</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <site-footer></site-footer>
+    <script type="module" src="/src/mapContent.js"></script>
+  </body>
 </html>
