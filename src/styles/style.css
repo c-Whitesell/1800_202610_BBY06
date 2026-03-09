@@ -30,5 +30,6 @@ body {
     height: 60px;
 }
 #map {
-    height: 700px;
+    height: 87vh;
+    width: 100vw;
 }
