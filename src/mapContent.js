@@ -80,7 +80,7 @@ L.Control.MyCustomButton = L.Control.extend({
   onAdd: function (map) {
     // Create the button element
     let container = L.DomUtil.create('button', 'modalButton');
-    container.innerHTML = 'My Button';
+    container.innerHTML = 'new post';
     container.style.height = '50px';
     container.style.width = '100px';
     container.style.borderRadius = '50px';
@@ -88,8 +88,9 @@ L.Control.MyCustomButton = L.Control.extend({
     container.style.color = 'white';
     // Add a click event listener
     L.DomEvent.on(container, 'click', function (e) {
-      alert('Button clicked!');
+      // alert('Button clicked!');
       // add on click pop up here
+      window.location.href = '/post.html';
       // Prevent event from propagating to the map
       L.DomEvent.stop(e);
     });
