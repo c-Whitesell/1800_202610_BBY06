@@ -33,3 +33,65 @@ body {
     height: 87vh;
     width: 100vw;
 }
+/* Ensure the button looks like part of the input */
+.map-search-btn {
+    background-color: #fff;
+    color: #6c757d;
+}
+
+.map-search-btn:hover {
+    background-color: #f8f9fa;
+}
+
+/* Remove default blue focus glow for a cleaner 'floating' look */
+.input-group .form-control:focus {
+    box-shadow: none;
+    z-index: 0;
+}
+
+/* Rounded corners for the entire bar */
+.input-group {
+    border-radius: 30px !important;
+    overflow: hidden;
+    background: white;
+}
+/* Style the filter button to remove the 'link' underline */
+.btn-link {
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.filter-bubble-btn {
+    height: 48px;
+    width: auto;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    padding: 0 15px; /* Perfect circle padding */
+}
+
+/* Hide the text initially */
+.filter-text {
+    max-width: 0;
+    opacity: 0;
+    display: inline-block;
+    transition: all 0.3s ease;
+    vertical-align: middle;
+}
+
+/* Expand on Hover */
+.filter-bubble-btn:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.filter-bubble-btn:hover .filter-text {
+    max-width: 100px; /* Room for the word "Filters" */
+    opacity: 1;
+}
+
+/* Remove Bootstrap's default dropdown arrow for a cleaner look */
+.dropdown-toggle::after {
+    display: none;
+}
