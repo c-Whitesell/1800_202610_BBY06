@@ -7,24 +7,68 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
-    <title>Favourite</title>
+    <title>Favorite</title>
 
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
   </head>
   <body>
-    <h1>Your Favourite Foods</h1>
-    <site-navbar></site-navbar>
+    <!-- WHITE CARD — navbar + main content only -->
+    <div class="page-wrapper">
+      <header class="navbar">
+        <div class="logo">Your Favorites</div>
+        <nav class="nav-links">
+          <a href="#">Veggie Cafe</a>
+          <a href="#">Salads Corner</a>
+          <a href="#">Lentil Market</a>
+        </nav>
+        <div class="nav-icons">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <h1 class="section-title">FAVORITES</h1>
+        <div class="product-grid" id="productGrid"></div>
+        <button class="load-more" id="loadMoreBtn">LOAD MORE</button>
+      </main>
+    </div>
+    <!-- END WHITE CARD -->
+
+    <!-- FOOTER — sits on the yellow background, below the card -->
+    <footer class="site-footer">
+      <span class="material-icons">favorite</span>
+      <span class="material-icons">home</span>
+      <span class="material-icons">map</span>
+      <span class="footer-copy">&copy; 2026 Thoughtful Food</span>
+    </footer>
 
     <div id="map"></div>
-    <footer class="navbar bg-info fixed-bottom footer">
-      <div class="container py-3 d-flex justify-content-around">
-        <span class="material-icons">favorite</span>
-        <span class="material-icons">home</span>
-        <span class="material-icons">map</span>
-      </div>
-    </footer>
-    <site-footer></site-footer>
     <script type="module" src="/src/mapContent.js"></script>
+    <script type="module" src="./src/favorite.js"></script>
   </body>
 </html>
