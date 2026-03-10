@@ -31,7 +31,7 @@ class SiteNavbar extends HTMLElement {
               <ul class="navbar-nav ms-auto">
                 
                 <li class="nav-item">
-                  <a class="nav-link" href="/">Home</a>
+                  <a class="nav-link" href="/main.html">Home</a>
                 </li>
 
                 <li class="nav-item">
