@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <!-- Display stars in form -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <!-- <link rel="stylesheet" href="./src/styles/style.css" /> -->
+    <title>Reviews · Thoughtful Food</title>
+
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+
+    <!-- review -->
+    <script type="module" src="/src/review.js"></script>
+  </head>
+
+  <body>
+    <site-navbar></site-navbar>
+
+    <div class="container">
+      <br />
+      <h1>Review for <span id="postTitle"> Food Item</span></h1>
+      <br />
+      <form>
+        <div class="form-group">
+          <label for="exampleFormControlInput1">* Add a title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            placeholder="Title"
+          />
+        </div>
+        <br />
+        <div class="form-group">
+          <div class="card-body">
+            <p>Rate your overall experience:</p>
+            <span class="material-icons star" id="star1">star_outline</span>
+            <span class="material-icons star" id="star2">star_outline</span>
+            <span class="material-icons star" id="star3">star_outline</span>
+            <span class="material-icons star" id="star4">star_outline</span>
+            <span class="material-icons star" id="star5">star_outline</span>
+          </div>
+          <label for="exampleFormControlSelect1"
+            >How was the portion size?</label
+          >
+          <select class="form-control" id="portion">
+            <option>Small</option>
+            <option>Good</option>
+            <option>Large</option>
+          </select>
+          <br />
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">When did you try it?</label>
+            <select class="form-control" id="season">
+              <option>Breakfast</option>
+              <option>Lunch</option>
+              <option>Dinner</option>
+            </select>
+            <br />
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1"
+              >* What did you think of the food?</label
+            >
+            <textarea class="form-control" id="description" rows="3"></textarea>
+          </div>
+          <br />
+          <!-- Flooded -->
+          <label
+            >Would you order again?<span
+              style="display: inline-block; width: 26pt"
+            ></span
+          ></label>
+
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flooded"
+              value="Yes"
+            />
+            <label>Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flooded"
+              value="No"
+            />
+            <label>No</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flooded"
+              value="unsure"
+              checked=""
+            />
+            <label>Not sure</label>
+          </div>
+          <br />
+
+          <br />
+          <div class="d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-lg btn-success pull-right"
+              id="submitBtn"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div
+      class="modal fade"
+      id="thankYouModal"
+      tabindex="-1"
+      aria-labelledby="thankYouLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header">
+            <h5 class="modal-title" id="thankYouLabel">Thank You!</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Your review has been submitted. 🌟</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
