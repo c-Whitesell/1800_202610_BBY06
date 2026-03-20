@@ -8,7 +8,7 @@
       rel="stylesheet"
     />
     <!-- <link rel="stylesheet" href="./src/styles/style.css" /> -->
-    <title>Food Post</title>
+    <title>Food Post · Thoughtful Food</title>
 
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
@@ -24,62 +24,64 @@
       </div>
     </section>
     <br />
-<form>
+<form id="postForm">
 <div class="d-flex justify-content-center align-items-center">
     <div style="width: 800px;">
       <div class="form-floating mb-3">
-  <input type="text" class="form-control" id="food" placeholder="Food Name">
-  <label for="floatingInput">Food Name</label>
+  <input type="text" class="form-control" id="title" placeholder="Food Name">
+  <label for="title">Food Name</label>
 </div>
 <div class="form-floating mb-3">
-  <input type="number" id="Price" class="form-control" placeholder="Price"/>
-  <label for="Price">Price</label>
+  <input type="number" id="price" class="form-control" placeholder="Price" step="0.01"/>
+  <label for="price">Price</label>
 </div>
 <div class="form-floating mb-3">
-  <input type="text" class="form-control" id="floatingInput" placeholder="Location">
-  <label for="floatingInput">Location</label>
+  <input type="text" class="form-control" id="location" placeholder="Location">
+  <label for="location">Location</label>
 </div>
 <div class="form-floating mb-3">
-  <textarea class="form-control" placeholder="Description here" id="floatingTextarea2Disabled" style="height: 100px"></textarea>
-  <label for="floatingTextarea2Disabled">Description</label>
+  <textarea class="form-control" placeholder="Description here" id="description" style="height: 100px"></textarea>
+  <label for="description">Description</label>
 </div>
 <div class="form-floating">
-  <div class="p-2">Dietary Tags</div>
+  <p class="h5">Dietary Tags</p>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">Vegetarian</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="veg" value="Vegetarian">
+  <label class="form-check-label" for="veg">Vegetarian</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-  <label class="form-check-label" for="inlineCheckbox2">Nut-free</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="nutFree" value="Nut-free">
+  <label class="form-check-label" for="nutFree">Nut-free</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-  <label class="form-check-label" for="inlineCheckbox3">Vegan</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="vegan" value="Vegan">
+  <label class="form-check-label" for="vegan">Vegan</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option3">
-  <label class="form-check-label" for="inlineCheckbox3">Gluten-free</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="glutenFree" value="Gluten-free">
+  <label class="form-check-label" for="glutenFree">Gluten-free</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="option3">
-  <label class="form-check-label" for="inlineCheckbox3">Peanut-free</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="peanutFree" value="Peanut-free">
+  <label class="form-check-label" for="peanutFree">Peanut-free</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox6" value="option3">
-  <label class="form-check-label" for="inlineCheckbox3">Alternative Dairy</label>
+  <input class="form-check-input" type="checkbox" name="dietary" id="dairyAlt" value="Dairy Alternative">
+  <label class="form-check-label" for="dairyAlt">Alternative Dairy</label>
 </div>
 
 
 <!--File input-->
 <div class="mb-3">
-  <label for="formFile" class="form-label p-2">Add an image</label>
+  <label for="formFile" class="form-label h5 p-2">Add an image</label>
   <input class="form-control" type="file" id="formFile" style="width:350px"> 
 </div>
-    </div>
-
-<button id="submit">Submit</button>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+  <button class="btn btn-success btn-lg me-md-2" type="submit">Submit Post</button>
+  <button class="btn btn-success btn-lg" type="reset">Reset</button>
 </div>
+    </div>
+    </div>
 </form>
 
 <!-- Thank You Modal -->
@@ -91,10 +93,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Your post has been successfully submitted. 🌟</p>
+                    <p>Your post has been successfully submitted!🌟</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -102,13 +104,13 @@
 
 
 
-    <footer class="navbar bg-info fixed-bottom footer">
+    <!-- <footer class="navbar bg-info fixed-bottom footer">
       <div class="container py-3 d-flex justify-content-around">
         <span class="material-icons">favorite</span>
         <span class="material-icons">home</span>
         <span class="material-icons">map</span>
       </div>
-    </footer>
+    </footer> -->
     <script type="module" src="./src/main.js"></script>
     <script type="module" src="./src/post.js"></script>
   </body>

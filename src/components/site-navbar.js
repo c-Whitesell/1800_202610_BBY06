@@ -31,19 +31,19 @@ class SiteNavbar extends HTMLElement {
               <ul class="navbar-nav ms-auto">
                 
                 <li class="nav-item">
-                  <a class="nav-link" href="/main.html">Home</a>
+                  <strong><a class="nav-link" href="/main.html">Home</a></strong>
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link" href="./post.html">Post</a>
+                  <strong><a class="nav-link" href="./post.html">Post</a></strong>
                 </li>
                 
                 <li class="nav-item">
-                  <a class="nav-link" href="./favourite.html">Favourites</a>
+                  <strong><a class="nav-link" href="./favourite.html">Favourites</a></strong>
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link" href="./help.html">Help</a>
+                  <strong><a class="nav-link" href="./help.html">Help</a></strong>
                 </li>
 
                 <div id="authControls" class="auth-controls d-flex align-items-center gap-2 my-2 my-lg-0">
