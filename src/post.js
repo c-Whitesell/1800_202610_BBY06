@@ -8,20 +8,30 @@ async function addPost() {
 
     // 🧾 Collect form data
     const foodTitle = document.getElementById("title").value;
-    const hikeLevel = document.getElementById("level").value;
-    const hikeSeason = document.getElementById("season").value;
-    const hikeDescription = document.getElementById("description").value;
-    const hikeFlooded = document.querySelector('input[name="flooded"]:checked')?.value;
-    const hikeScrambled = document.querySelector('input[name="scrambled"]:checked')?.value;
+    const foodPrice = document.getElementById("price").value;
+    const foodLocation = document.getElementById("location").value;
+    const foodDescription = document.getElementById("description").value;
+
+    // Collect selected checkboxes
+    const dietaryTags = [];
+    const checkboxes = document.querySelectorAll('input[name="dietary"]:checked');
+
+    checkboxes.forEach(cb => {
+        dietaryTags.push(cb.value);
+    });
 
     // Log collected data for verification
-    console.log("inside write review, rating =", hikeRating);
-    console.log("hikeDocID =", hikeDocID);
-    console.log("Collected review data:");
-    console.log(hikeTitle, hikeLevel, hikeSeason, hikeDescription, hikeFlooded, hikeScrambled);
+    console.log("Collected food data:");
+    console.log({
+        foodTitle,
+        foodPrice,
+        foodLocation,
+        foodDescription,
+        dietaryTags
+    })
 
     // simple validation
-    if (!hikeTitle || !hikeDescription) {
+    if (!foodTitle || !foodDescription) {
         alert("Please complete all required fields.");
         return;
     }
@@ -33,22 +43,18 @@ async function addPost() {
         try {
             const userID = user.uid;
 
-            // ✅ Store review as subcollection under this hike
-            // Path: hikes/{hikeDocID}/reviews/{autoReviewID}
-            await addDoc(collection(db, "hikes", hikeDocID, "reviews"), {
+            //Save to Firestore
+            const docRef = await addDoc(collection(db, "posts"), {
+                foodTitle: foodTitle,
+                price: Number(foodPrice),
+                location: foodLocation,
+                description: foodDescription,
+                dietaryTags: dietaryTags,
                 userID: userID,
-                title: hikeTitle,
-                level: hikeLevel,
-                season: hikeSeason,
-                description: hikeDescription,
-                flooded: hikeFlooded,
-                scrambled: hikeScrambled,
-                rating: hikeRating,
-                timestamp: serverTimestamp()
+                createdAt: serverTimestamp()
             });
 
-            console.log("Review successfully written!");
-
+            const foodDocID = docRef.id;
 
             // Show thank-you modal
             const thankYouModalEl = document.getElementById("thankYouModal");
@@ -57,7 +63,7 @@ async function addPost() {
 
             // Redirect AFTER user closes the modal
             thankYouModalEl.addEventListener("hidden.bs.modal", () => {
-                window.location.href = `eachHike.html?docID=${hikeDocID}`;
+                window.location.href = `post.html?docID=${foodDocID}`;
             }, { once: true });
 
         } catch (error) {
@@ -68,3 +74,16 @@ async function addPost() {
         //window.location.href = "review.html";
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("postForm");
+
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            addPost();
+        });
+    } else {
+        console.error("Form not found");
+    }
+});

@@ -7,33 +7,33 @@ import { auth } from '/src/firebaseConfig.js';
 // If you have custom global styles, import them as well:
 import './styles/style.css';
 
-function sayHello() {}
-// document.addEventListener('DOMContentLoaded', sayHello);
-async function addPostData(event) {
-  event.preventDefault();
+// function sayHello() {}
+// // document.addEventListener('DOMContentLoaded', sayHello);
+// async function addPostData(event) {
+//   event.preventDefault();
 
-  const foodTitle = document.getElementById('floatingInput');
-  const priceInput = document.getElementById('Price');
-  const description = document.getElementById('floatingTextarea2Disabled');
+//   const foodTitle = document.getElementById('floatingInput');
+//   const priceInput = document.getElementById('Price');
+//   const description = document.getElementById('floatingTextarea2Disabled');
 
-  const food = foodTitle.value;
-  const price = parseFloat(priceInput.value);
-  const desc = description.value;
+//   const food = foodTitle.value;
+//   const price = parseFloat(priceInput.value);
+//   const desc = description.value;
 
-  try {
-    await addDoc(collection(db, 'posts'), {
-      foodTitle: food,
-      price: price,
-      location: location,
-      description: desc,
-    });
-    foodTitle.value = '';
-    priceInput.value = '';
-    location.value = '';
-    description.value = '';
-  } catch (e) {
-    console.log('Error adding doc: ', e);
-  }
-}
+//   try {
+//     await addDoc(collection(db, 'posts'), {
+//       foodTitle: food,
+//       price: price,
+//       location: location,
+//       description: desc,
+//     });
+//     foodTitle.value = '';
+//     priceInput.value = '';
+//     location.value = '';
+//     description.value = '';
+//   } catch (e) {
+//     console.log('Error adding doc: ', e);
+//   }
+// }
 
-document.getElementById('submit').addEventListener('click', addPostData);
+// document.getElementById('submit').addEventListener('click', addPostData);
