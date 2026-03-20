@@ -24,10 +24,12 @@ async function addPostData(event) {
     await addDoc(collection(db, 'posts'), {
       foodTitle: food,
       price: price,
+      location: location,
       description: desc,
     });
     foodTitle.value = '';
     priceInput.value = '';
+    location.value = '';
     description.value = '';
   } catch (e) {
     console.log('Error adding doc: ', e);

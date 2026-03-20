@@ -15,6 +15,7 @@
   </head>
 
   <body>
+
     <site-navbar></site-navbar>
 
     <section class="text-dark text-center p-5">
@@ -27,12 +28,16 @@
 <div class="d-flex justify-content-center align-items-center">
     <div style="width: 800px;">
       <div class="form-floating mb-3">
-  <input type="text" class="form-control" id="floatingInput" placeholder="Food Name">
+  <input type="text" class="form-control" id="food" placeholder="Food Name">
   <label for="floatingInput">Food Name</label>
 </div>
 <div class="form-floating mb-3">
   <input type="number" id="Price" class="form-control" placeholder="Price"/>
   <label for="Price">Price</label>
+</div>
+<div class="form-floating mb-3">
+  <input type="text" class="form-control" id="floatingInput" placeholder="Location">
+  <label for="floatingInput">Location</label>
 </div>
 <div class="form-floating mb-3">
   <textarea class="form-control" placeholder="Description here" id="floatingTextarea2Disabled" style="height: 100px"></textarea>
@@ -77,6 +82,24 @@
 </div>
 </form>
 
+<!-- Thank You Modal -->
+    <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="thankYouLabel">Thank You!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Your post has been successfully submitted. 🌟</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <footer class="navbar bg-info fixed-bottom footer">
@@ -87,5 +110,6 @@
       </div>
     </footer>
     <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/post.js"></script>
   </body>
 </html>
