@@ -20,51 +20,62 @@
 
     <section class="text-dark text-center p-5">
       <div class="container">
-        <h1 class="display-4 fw-bold text-body-emphasis">Create Food Option</h1>
+        <h1 class="display-4 fw-bold text-body-emphasis">Food Post</h1>
       </div>
     </section>
     <br />
+
 <form id="postForm">
-<div class="d-flex justify-content-center align-items-center">
+
+<div class="d-flex justify-content-center align-items-center">  
     <div style="width: 800px;">
       <div class="form-floating mb-3">
   <input type="text" class="form-control" id="title" placeholder="Food Name">
   <label for="title">Food Name</label>
 </div>
+
 <div class="form-floating mb-3">
   <input type="number" id="price" class="form-control" placeholder="Price" step="0.01"/>
   <label for="price">Price</label>
 </div>
+
 <div class="form-floating mb-3">
   <input type="text" class="form-control" id="location" placeholder="Location">
   <label for="location">Location</label>
 </div>
+
 <div class="form-floating mb-3">
   <textarea class="form-control" placeholder="Description here" id="description" style="height: 100px"></textarea>
   <label for="description">Description</label>
 </div>
+
 <div class="form-floating">
   <p class="h5">Dietary Tags</p>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="veg" value="Vegetarian">
   <label class="form-check-label" for="veg">Vegetarian</label>
 </div>
+
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="nutFree" value="Nut-free">
   <label class="form-check-label" for="nutFree">Nut-free</label>
 </div>
+
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="vegan" value="Vegan">
   <label class="form-check-label" for="vegan">Vegan</label>
 </div>
+
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="glutenFree" value="Gluten-free">
   <label class="form-check-label" for="glutenFree">Gluten-free</label>
 </div>
+
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="peanutFree" value="Peanut-free">
   <label class="form-check-label" for="peanutFree">Peanut-free</label>
 </div>
+
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="dietary" id="dairyAlt" value="Dairy Alternative">
   <label class="form-check-label" for="dairyAlt">Alternative Dairy</label>
@@ -76,9 +87,10 @@
   <label for="formFile" class="form-label h5 p-2">Add an image</label>
   <input class="form-control" type="file" id="formFile" style="width:350px"> 
 </div>
+
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-  <button class="btn btn-success btn-lg me-md-2" type="submit">Submit Post</button>
-  <button class="btn btn-success btn-lg" type="reset">Reset</button>
+  <button class="btn btn-success me-md-2" type="submit">Submit Post</button>
+  <button class="btn btn-success" type="reset">Reset</button>
 </div>
     </div>
     </div>

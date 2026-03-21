@@ -9,8 +9,8 @@ import * as bootstrap from "bootstrap";
 // and display in title of the page
 //-----------------------------------------------------------
 var postDocID = localStorage.getItem('postDocID');
-displayHikeName(postDocID);
-async function displayHikeName(id) {
+displayPostName(postDocID);
+async function displayPostName(id) {
     try {
         const ref = doc(db, "posts", id);
         const snap = await getDoc(ref);
@@ -113,7 +113,7 @@ async function writeReview() {
 
             // Redirect AFTER user closes the modal
             thankYouModalEl.addEventListener("hidden.bs.modal", () => {
-                window.location.href = `eachHike.html?docID=${hikeDocID}`;
+                window.location.href = `eachPost.html?docID=${postDocID}`;
             }, { once: true });
 
         } catch (error) {
