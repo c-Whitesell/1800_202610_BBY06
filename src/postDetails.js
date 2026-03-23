@@ -12,7 +12,6 @@ import {
 } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
 
-// get ID from URL
 function getPostId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
@@ -80,7 +79,7 @@ async function addReview(e) {
 
   alert("Review added!");
 
-  loadReviews(); // refresh
+  loadReviews(); 
 }
 
 document.addEventListener("DOMContentLoaded", () => {
