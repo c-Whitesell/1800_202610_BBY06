@@ -102,3 +102,103 @@ body {
   top: 100px;
   z-index: 3;
 }
+
+#posts-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.post-card {
+  background: var(--secondary-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.post-section {
+  margin-top: 10px;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.post-card h3 {
+  margin-bottom: 8px;
+}
+
+.post-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.post-actions button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #007bff;
+  color: white;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-save {
+  background: #28a745;
+  color: white;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.tags-container {
+  margin-top: 5px;
+}
+
+.tag {
+  display: inline-block;
+  background: #e9ecef;
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin: 3px;
+  font-size: 12px;
+}
+
+#new-post-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 28px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+#new-post-btn:hover {
+  transform: scale(1.1);
+}
