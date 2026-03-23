@@ -4,7 +4,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: background: #fff275;
+      background: #fff275;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -160,8 +160,21 @@
   document.head.appendChild(style);
 })();
 
+// ── FIREBASE IMPORTS ──────────────────────────────────────────────────────────
+// The path "./firebaseConfig.js" works because both files are in the "src" folder
+import {
+  doc,
+  setDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from "./firebaseConfig.js";
+
+let currentUserId = null; // Store the logged-in user's ID
+
 // ── Product Data ──────────────────────────────────────────────────────────────
-// Replace these with your own items — swap image URLs, names, artists, prices
 const allProducts = [
   {
     id: 1,
@@ -170,7 +183,7 @@ const allProducts = [
     price: "$32",
     image:
       "https://th.bing.com/th/id/OIP.6xbT585YV2aY0FPosR9icgHaHa?w=203&h=203&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: true,
+    liked: false, // Defaulting all to false initially
   },
   {
     id: 2,
@@ -179,7 +192,7 @@ const allProducts = [
     price: "$17",
     image:
       "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=400&q=80",
-    liked: true,
+    liked: false,
   },
   {
     id: 3,
@@ -188,7 +201,7 @@ const allProducts = [
     price: "$23",
     image:
       "https://th.bing.com/th/id/OIP.vCalokOuknlIeQrTuyQS7wHaFE?w=234&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: true,
+    liked: false,
   },
   {
     id: 4,
@@ -223,7 +236,38 @@ const allProducts = [
 const BATCH = 3;
 let visibleCount = BATCH;
 const likedState = {};
-allProducts.forEach((p) => (likedState[p.id] = p.liked));
+
+// Initialize state to false for all products
+allProducts.forEach((p) => (likedState[p.id] = false));
+
+// ── FIREBASE: Sync initial state on load ──────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUserId = user.uid;
+    try {
+      // Fetch this specific user's favourites from Firestore
+      const favRef = collection(db, "users", currentUserId, "favourites");
+      const snapshot = await getDocs(favRef);
+
+      // Update the likedState object with data from the database
+      snapshot.forEach((doc) => {
+        const favData = doc.data();
+        if (favData.itemId) {
+          likedState[Number(favData.itemId)] = true;
+        }
+      });
+
+      // Re-render the products now that we know the true liked state
+      renderProducts();
+    } catch (error) {
+      console.error("Error fetching favourites:", error);
+    }
+  } else {
+    currentUserId = null;
+    console.log("No user logged in. Showing default state.");
+    renderProducts();
+  }
+});
 
 // ── Build a single product card ───────────────────────────────────────────────
 function createCard(product) {
@@ -259,9 +303,10 @@ function renderProducts() {
   btn.style.display = visibleCount >= allProducts.length ? "none" : "block";
 }
 
-// ── Wire up Load More ─────────────────────────────────────────────────────────
+// ── Wire up Load More & Firebase Clicks ───────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  renderProducts();
+  // We wait for Firebase auth state to load before initial render,
+  // so we don't call renderProducts() immediately here anymore.
 
   const btn = document.getElementById("loadMoreBtn");
   const grid = document.getElementById("productGrid");
@@ -272,12 +317,49 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Heart toggle — event delegation on the grid
-  grid?.addEventListener("click", (e) => {
+  grid?.addEventListener("click", async (e) => {
     const heartBtn = e.target.closest(".heart-btn");
     if (!heartBtn) return;
+
+    // If no one is logged in, alert them
+    if (!currentUserId) {
+      alert("Please log in to save favourites!");
+      return;
+    }
+
     const id = Number(heartBtn.dataset.id);
-    likedState[id] = !likedState[id];
-    heartBtn.style.color = likedState[id] ? "#e74c3c" : "#ccc";
-    heartBtn.classList.toggle("inactive", !likedState[id]);
+    const isNowLiked = !likedState[id]; // Determine the new state
+
+    // 1. Update the UI immediately
+    likedState[id] = isNowLiked;
+    heartBtn.style.color = isNowLiked ? "#e74c3c" : "#ccc";
+    heartBtn.classList.toggle("inactive", !isNowLiked);
+
+    // 2. FIREBASE: Save the change to the database
+    try {
+      const docRef = doc(
+        db,
+        "users",
+        currentUserId,
+        "favourites",
+        id.toString(),
+      );
+
+      if (isNowLiked) {
+        // Add to database
+        await setDoc(docRef, {
+          itemId: id,
+          addedAt: new Date(),
+        });
+      } else {
+        // Remove from database
+        await deleteDoc(docRef);
+      }
+    } catch (error) {
+      console.error("Error updating database:", error);
+      // Optional: Revert UI if database fails
+      // likedState[id] = !isNowLiked;
+      // renderProducts();
+    }
   });
 });
