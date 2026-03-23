@@ -35,7 +35,7 @@ class SiteNavbar extends HTMLElement {
                 </li>
 
                 <li class="nav-item">
-                  <strong><a class="nav-link" href="./post.html">Post</a></strong>
+                  <strong><a class="nav-link" href="./MyPosts.html">My Posts</a></strong>
                 </li>
                 
                 <li class="nav-item">
