@@ -202,3 +202,52 @@ body {
 #new-post-btn:hover {
   transform: scale(1.1);
 }
+
+.pop-up-iframe-container {
+  /* Positioning */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+
+  /* "Certain Size" */
+  width: 600px;
+  height: 450px;
+
+  /* Constraints for small screens (Responsive) */
+  max-width: 95vw;
+  max-height: 95vh;
+
+  /* Styling */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden; /* Keeps iframe corners clean */
+}
+
+.pop-up-iframe {
+  width: 100%; /* Makes the iframe fill its container's width */
+  height: 100%; /* Makes the iframe fill its container's height */
+  border: none; /* Removes the default iframe border */
+  display: block;
+}
+
+.pop-up-close-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10001; /* Must be higher than the iframe */
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
