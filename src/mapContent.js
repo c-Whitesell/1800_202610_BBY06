@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import "./styles/style.css";
 import "leaflet/dist/leaflet.css";
+import { createIframePopup } from "./utils.js"; // Note the relative path and file extension
 
 import * as L from "leaflet";
 
@@ -90,7 +91,8 @@ L.Control.MyCustomButton = L.Control.extend({
     L.DomEvent.on(container, "click", function (e) {
       // alert('Button clicked!');
       // add on click pop up here
-      window.location.href = "/post.html";
+      //window.location.href = "/post.html";
+      createIframePopup(container, "/post.html");
       // Prevent event from propagating to the map
       L.DomEvent.stop(e);
     });
