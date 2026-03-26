@@ -3,6 +3,7 @@ import { auth } from "./firebaseConfig.js";
 import {
   doc,
   getDoc,
+  getDocs,
   collection,
   addDoc,
   serverTimestamp,
@@ -20,6 +21,7 @@ function getPostId() {
 // load post
 async function loadPost() {
   const postId = getPostId();
+  console.log("Post ID:", postId);
 
   const docRef = doc(db, "posts", postId);
   const docSnap = await getDoc(docRef);
