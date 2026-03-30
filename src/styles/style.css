@@ -212,7 +212,7 @@ body {
   z-index: 9999;
 
   /* "Certain Size" */
-  width: 600px;
+  width: 700px;
   height: 450px;
 
   /* Constraints for small screens (Responsive) */
@@ -224,6 +224,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   overflow: hidden; /* Keeps iframe corners clean */
+  /* padding: 15px; */
 }
 
 .pop-up-iframe {
@@ -231,6 +232,8 @@ body {
   height: 100%; /* Makes the iframe fill its container's height */
   border: none; /* Removes the default iframe border */
   display: block;
+  /* padding: 15px; */
+  /* margin: 15px; */
 }
 
 .pop-up-close-button {
