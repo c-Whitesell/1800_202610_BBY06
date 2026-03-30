@@ -16,7 +16,7 @@ async function loadPosts() {
         const id = doc.id;
 
         const div = document.createElement("div");
-        div.className = "col-md-4 mb-4";
+        div.className = "col-12 mb-4";
 
         div.innerHTML = `
             <div class="card h-100 shadow-sm">
