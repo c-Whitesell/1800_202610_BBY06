@@ -16,29 +16,40 @@ async function loadPosts() {
         const id = doc.id;
 
         const div = document.createElement("div");
-        div.className = "col-12 mb-4";
+        div.className = "col-12 col-md-6 col-lg-4 mb-4";;
 
         div.innerHTML = `
-            <div class="card h-100 shadow-sm">
+<div class="card h-100 shadow-sm">
+
+  ${post.image ? `
+  <img 
+    src="data:image/*;base64,${post.image}" 
+    class="card-img-top" 
+    "
+  >` : ""}
+
+  <div class="card-body">
+    <h5 class="card-title">${post.foodTitle}</h5>
+    <p class="card-text">${post.description}</p>
+    <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
+
     <div class="card-body">
-      <h5 class="card-title">${post.foodTitle}</h5>
-      <p class="card-text">${post.description}</p>
-      <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
-      <div class="card-body">
-            <span class="material-icons star" id="star1">star_outline</span>
-            <span class="material-icons star" id="star2">star_outline</span>
-            <span class="material-icons star" id="star3">star_outline</span>
-            <span class="material-icons star" id="star4">star_outline</span>
-            <span class="material-icons star" id="star5">star_outline</span>
-      </div>
-    </div>
-    <div class="card-footer bg-transparent border-0">
-      <button class="btn btn-success w-100" onclick="viewPost('${id}')">
-        View Details
-      </button>
+      <span class="material-icons star">star_outline</span>
+      <span class="material-icons star">star_outline</span>
+      <span class="material-icons star">star_outline</span>
+      <span class="material-icons star">star_outline</span>
+      <span class="material-icons star">star_outline</span>
     </div>
   </div>
-        `;
+
+  <div class="card-footer bg-transparent border-0">
+    <button class="btn btn-success w-100" onclick="viewPost('${id}')">
+      View Details
+    </button>
+  </div>
+
+</div>
+`;
 
         container.appendChild(div);
     });
