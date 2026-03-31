@@ -135,12 +135,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const stars = document.querySelectorAll("#ratingContainer .star");
   stars.forEach((star) => {
     star.addEventListener("click", () => {
-      // mark all stars up to clicked one as selected
       const ratingValue = Number(star.dataset.value);
+
+      // update selected class
       stars.forEach((s) => {
         s.classList.remove("selected");
-        if (Number(s.dataset.value) <= ratingValue) s.classList.add("selected");
+        if (Number(s.dataset.value) <= ratingValue) {
+          s.classList.add("selected");
+        }
       });
+
+      // update star icons
+      updateStarsUI(ratingValue);
     });
   });
 });

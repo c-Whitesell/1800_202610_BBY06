@@ -261,3 +261,13 @@ body {
   height: 200px;
   object-fit: cover;
 }
+
+/* rating stars cursor */
+.star {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.star.selected {
+  color: gold;
+}
