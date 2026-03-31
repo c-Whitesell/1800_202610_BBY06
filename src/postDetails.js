@@ -3,6 +3,7 @@ import { auth } from "./firebaseConfig.js";
 import {
   doc,
   getDoc,
+  getDocs,
   collection,
   addDoc,
   serverTimestamp,
@@ -12,7 +13,6 @@ import {
 } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
 
-// get ID from URL
 function getPostId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
@@ -21,6 +21,7 @@ function getPostId() {
 // load post
 async function loadPost() {
   const postId = getPostId();
+  console.log("Post ID:", postId);
 
   const docRef = doc(db, "posts", postId);
   const docSnap = await getDoc(docRef);
@@ -80,7 +81,7 @@ async function addReview(e) {
 
   alert("Review added!");
 
-  loadReviews(); // refresh
+  loadReviews(); 
 }
 
 document.addEventListener("DOMContentLoaded", () => {
