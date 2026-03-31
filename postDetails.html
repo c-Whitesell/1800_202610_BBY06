@@ -7,8 +7,9 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+
     <!-- <link rel="stylesheet" href="./src/styles/style.css" /> -->
-    <title>Each Post</title>
+    <title>Reviews · Thoughtful Food</title>
 
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
@@ -18,41 +19,66 @@
     <site-navbar></site-navbar>
 
     <div class="container mt-5">
+      <h2 class="my-4">Post</h2>
 
       <!-- alert -->
       <div id="alertContainer"></div>
 
-  <!-- Post -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h2 id="title"></h2>
-      <p id="description"></p>
-      <p class="text-muted" id="tags"></p>
-    </div>
-  </div>
-
-  <!-- Reviews -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h4>Reviews</h4>
-      <div id="reviewsContainer"></div>
-    </div>
-  </div>
-
-  <!-- Add Review -->
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h4>Write a Review</h4>
-      <form id="reviewForm">
-        <div class="mb-3">
-          <textarea class="form-control" id="reviewText" rows="3" placeholder="Write your review..."></textarea>
+      <!-- Post -->
+      <div class="card shadow-sm mb-4">
+        <img id="postImage" class="card-img-top" />
+        <div class="card-body">
+          <h2 id="title"></h2>
+          <p id="description"></p>
+          <p class="text-muted" id="tags"></p>
         </div>
-        <button class="btn btn-success">Submit Review</button>
-      </form>
-    </div>
-  </div>
+      </div>
 
-</div>
+      <!-- Reviews -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h4>Reviews</h4>
+          <div id="reviewsContainer"></div>
+        </div>
+      </div>
+
+      <!-- Add Review -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4>Write a Review</h4>
+          <form id="reviewForm">
+            <div class="mb-3">
+              <textarea
+                class="form-control"
+                id="reviewText"
+                rows="3"
+                placeholder="Write your review..."
+              ></textarea>
+            </div>
+            <!-- Rating -->
+            <div id="ratingContainer" class="mb-3">
+              <span class="material-icons star" data-value="1"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="2"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="3"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="4"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="5"
+                >star_outline</span
+              >
+            </div>
+            <p id="avgRating" class="text-warning mb-3"></p>
+            <button class="btn btn-success">Submit Review</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="./src/postDetails.js"></script>
     <script type="module" src="./src/main.js"></script>
