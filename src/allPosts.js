@@ -51,7 +51,7 @@ async function loadPosts() {
     let starsHTML = "";
     for (let i = 1; i <= 5; i++) {
       starsHTML += `
-        <span class="material-icons text-warning">
+        <span class="material-icons text-dark" style="font-size: 20px">
           ${i <= Math.round(avgRating) ? "star" : "star_outline"}
         </span>
       `;
