@@ -1,0 +1,133 @@
+import { db } from "./firebaseConfig.js";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
+// Take any string, and return the soundex
+export function soundex(s) {
+  const a = s.toLowerCase().split("");
+  const f = a.shift();
+  let r = "";
+  const codes = {
+    a: "",
+    e: "",
+    i: "",
+    o: "",
+    u: "",
+    b: 1,
+    f: 1,
+    p: 1,
+    v: 1,
+    c: 2,
+    g: 2,
+    j: 2,
+    k: 2,
+    q: 2,
+    s: 2,
+    x: 2,
+    z: 2,
+    d: 3,
+    t: 3,
+    l: 4,
+    m: 5,
+    n: 5,
+    r: 6,
+  };
+
+  r =
+    f +
+    a
+      .map((v) => codes[v])
+      .filter((v, i, b) => (i === 0 ? v !== codes[f] : v !== b[i - 1]))
+      .join("");
+
+  return (r + "000").slice(0, 4).toUpperCase();
+}
+
+export function createSearchMap(text, weight = 1, m) {
+  const NUMBER_OF_WORDS = 3;
+
+  // regex matches any alphanumeric from any language and strips spaces
+  const finalArray = [];
+
+  const wordArray = text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ") // Keeps letters and numbers from any script
+    .replace(/ +/g, " ") // Collapses multiple spaces into one
+    .trim() // Removes leading/trailing whitespace
+    .split(" ");
+
+  // Safety check: if text was empty, split(' ') might return ['']
+  if (wordArray.length === 1 && wordArray[0] === "") return [];
+
+  do {
+    // Take a slice of the first N words (e.g., 4)
+    finalArray.push(wordArray.slice(0, NUMBER_OF_WORDS).join(" "));
+
+    // Remove the first word to "slide" the window forward
+    wordArray.shift();
+  } while (wordArray.length !== 0);
+
+  let index = finalArray;
+
+  const temp = [];
+
+  // Translate to soundex
+  for (const i of index) {
+    temp.push(
+      i
+        .split(" ")
+        .map((v) => soundex(v))
+        .join(" "),
+    );
+  }
+
+  index = temp;
+  if (typeof m !== "undefined" && m !== null) {
+    // The variable exists and is not null
+  } else {
+    // It doesn't exist yet, so initialize it
+    var m = {};
+  }
+  // Add each iteration from the createIndex
+  for (const phrase of index) {
+    if (phrase) {
+      let v = "";
+      const t = phrase.split(" ");
+      while (t.length > 0) {
+        const r = t.shift();
+        v += v ? " " + r : r;
+
+        // Increment for relevance
+        // Using the logical OR operator is a clean way to handle undefined keys
+        m[v] = (m[v] || 0) + 1 * weight;
+      }
+    }
+  }
+  return m;
+}
+
+export async function searchTextFirebaseCollection(text, collectionName) {
+  // Convert search text to phonetic code
+  const searchText = text
+    .trim()
+    .split(" ")
+    .map((v) => soundex(v))
+    .join(" ");
+
+  // Query Firestore: Order by the specific phonetic key, highest frequency first
+  const q = query(
+    collection(db, collectionName),
+    orderBy(`searchArray.${searchText}`, "desc"), // Note: using 'searchArray' to match your post.js
+    limit(5),
+  );
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
