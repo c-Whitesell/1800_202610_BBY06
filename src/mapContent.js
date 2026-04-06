@@ -1,3 +1,4 @@
+// These are the imports for the app functionality
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import './styles/style.css';
@@ -6,16 +7,18 @@ import { createIframePopup } from './utils.js'; // Note the relative path and fi
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
+// leaflet import
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-console.log('L', L);
 
 let userLat = null;
 let userLng = null;
 let routingControl = null;
 
+//This is the creation of the map view and location
 const map = L.map('map').setView([49.236, -123.025], 13);
 
+//Creates the map layer
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
@@ -61,12 +64,6 @@ getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
     console.log(`Found ${restaurants.length} restaurants.`);
     // console.log(restaurants);
     restaurants.forEach((node) => {
-      // console.log(node.lat);
-      // console.log(node.lon);
-      // L.marker([node.lat, node.lon]).addTo(map);
-      // .bindPopup("A pretty CSS popup.<br> Easily customizable.")
-      // .openPopup();
-
       const marker = L.marker([node.lat, node.lon]).addTo(map);
 
       marker.bindPopup(`
@@ -83,6 +80,7 @@ getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
             return;
           }
 
+          //Routing done by google
           const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${node.lat},${node.lon}&travelmode=driving`;
           window.open(googleMapsUrl, '_blank');
         });
@@ -90,6 +88,7 @@ getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
     });
   }
 });
+//This is the user location
 map.locate({ setView: true, maxZoom: 16 });
 
 function onLocationFound(e) {
@@ -104,9 +103,10 @@ function onLocationFound(e) {
 
 map.on('locationfound', onLocationFound);
 
+//Creates the new post button and sets location
 L.Control.MyCustomButton = L.Control.extend({
   options: {
-    position: 'bottomleft', // Position the control in the bottom left
+    position: 'bottomleft',
   },
 
   onAdd: function (map) {
@@ -120,9 +120,6 @@ L.Control.MyCustomButton = L.Control.extend({
     container.style.color = 'white';
     // Add a click event listener
     L.DomEvent.on(container, 'click', function (e) {
-      // alert('Button clicked!');
-      // add on click pop up here
-      //window.location.href = "/post.html";
       createIframePopup(container, '/postPopup.html');
       // Prevent event from propagating to the map
       L.DomEvent.stop(e);
@@ -140,11 +137,10 @@ L.Control.MyCustomButton = L.Control.extend({
   },
 });
 
-// Add the new control to the map
+//Adds the Favorite button
 let myCustomButton = new L.Control.MyCustomButton();
 myCustomButton.addTo(map);
 
-// Favourites button
 L.Control.FavouritesButton = L.Control.extend({
   options: {
     position: 'bottomleft',
@@ -171,54 +167,3 @@ L.Control.FavouritesButton = L.Control.extend({
 
 let favouritesButton = new L.Control.FavouritesButton();
 favouritesButton.addTo(map);
-
-let routingLine = null; // store the current route so we can remove it
-
-async function manualORSRouting(start, end) {
-  const apiKey = 'YOUR_ORS_API_KEY'; // replace with your key
-
-  try {
-    const response = await fetch(
-      'https://api.openrouteservice.org/v2/directions/driving-car',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: apiKey,
-        },
-        body: JSON.stringify({
-          coordinates: [
-            [start.lon, start.lat],
-            [end.lon, end.lat],
-          ],
-        }),
-      },
-    );
-
-    if (!response.ok) throw new Error(`ORS API error: ${response.status}`);
-    const data = await response.json();
-
-    const coords = data.features[0].geometry.coordinates.map(([lon, lat]) => [
-      lat,
-      lon,
-    ]);
-
-    // Remove previous route if it exists
-    if (routingLine) {
-      map.removeLayer(routingLine);
-    }
-
-    // Draw new route
-    routingLine = L.polyline(coords, {
-      color: 'blue',
-      weight: 5,
-      opacity: 0.7,
-    }).addTo(map);
-
-    // Optionally fit map to route
-    map.fitBounds(routingLine.getBounds());
-  } catch (error) {
-    console.error('Error fetching ORS route:', error);
-    alert('Failed to get route. Please try again.');
-  }
-}
