@@ -220,7 +220,7 @@ body {
   max-height: 95vh;
 
   /* Styling */
-  background: white;
+  background: var(--primary-color);
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   overflow: hidden; /* Keeps iframe corners clean */
@@ -232,7 +232,7 @@ body {
   height: 100%; /* Makes the iframe fill its container's height */
   border: none; /* Removes the default iframe border */
   display: block;
-  /* padding: 15px; */
+  padding: 15px; /**/
   /* margin: 15px; */
 }
 
