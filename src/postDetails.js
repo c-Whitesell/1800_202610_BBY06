@@ -66,7 +66,7 @@ async function loadReviews() {
 
   snapshot.forEach((docSnap) => {
     const review = docSnap.data();
-    const reviewId = docSnap.id; // ← ADD THIS
+    const reviewId = docSnap.id; 
 
     const div = document.createElement('div');
     div.className = 'border rounded p-2 mb-2';
@@ -78,7 +78,7 @@ async function loadReviews() {
 
     let starsHTML = "";
     for (let i = 1; i <= 5; i++) {
-      starsHTML += `<span class="material-icons text-warning">${i <= rating ? "star" : "star_outline"}</span>`;
+      starsHTML += `<span class="material-icons text-secondary" style="font-size: 20px">${i <= rating ? "star" : "star_outline"}</span>`;
     }
 
     div.innerHTML = `
