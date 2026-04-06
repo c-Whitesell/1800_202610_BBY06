@@ -10,8 +10,9 @@ import {
   query,
   orderBy,
   where,
-} from 'firebase/firestore';
-import * as bootstrap from 'bootstrap';
+  deleteDoc,
+} from "firebase/firestore";
+import * as bootstrap from "bootstrap";
 
 function getPostId() {
   const params = new URLSearchParams(window.location.search);
@@ -63,25 +64,39 @@ async function loadReviews() {
   let totalRating = 0;
   let count = 0;
 
-  snapshot.forEach((doc) => {
-    const review = doc.data();
+  snapshot.forEach((docSnap) => {
+    const review = docSnap.data();
+    const reviewId = docSnap.id; // ← ADD THIS
 
     const div = document.createElement('div');
     div.className = 'border rounded p-2 mb-2';
 
+    const rating = review.rating ?? 0;
+
+    totalRating += rating;
+    count++;
+
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+      starsHTML += `<span class="material-icons text-warning">${i <= rating ? "star" : "star_outline"}</span>`;
+    }
+
     div.innerHTML = `
-      ${review.rating ? `<p>Rating: ${'⭐'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</p>` : ''}
-      <p class="mb-1">${review.text}</p>
-      <small class="text-muted">User: ${review.userID}</small>
-    `;
+    <p>${starsHTML}</p>
+    <p class="mb-1">${review.text}</p>
+    <div class="d-flex justify-content-between align-items-center">
+  <small class="text-muted">User: ${review.userID}</small>
+  ${
+    auth.currentUser && auth.currentUser.uid === review.userID
+      ? `<button class="btn btn-sm btn-danger delete-review" data-id="${reviewId}">
+          Delete
+        </button>`
+      : ""
+  }
+</div>
+  `;
 
     container.appendChild(div);
-
-    // calculate average rating
-    if (review.rating) {
-      totalRating += review.rating;
-      count++;
-    }
   });
 
   const avgRating = count > 0 ? (totalRating / count).toFixed(1) : 0;
@@ -93,11 +108,11 @@ async function loadReviews() {
 async function addReview(e) {
   e.preventDefault();
 
-  const text = document.getElementById('reviewText').value;
-  const rating =
-    Number(
-      document.querySelector('#ratingContainer .star.selected')?.dataset.value,
-    ) || 0;
+  const text = document.getElementById("reviewText").value;
+  const selectedStars = document.querySelectorAll(
+    "#ratingContainer .star.selected",
+  );
+  const rating = selectedStars.length;
   const user = auth.currentUser;
   const postId = getPostId();
 
@@ -149,6 +164,20 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStarsUI(ratingValue);
     });
   });
+
+  // Delete Handler
+  document
+    .getElementById("reviewsContainer")
+    .addEventListener("click", async (e) => {
+      if (e.target.classList.contains("delete-review")) {
+        const reviewId = e.target.dataset.id;
+
+        if (confirm("Delete this review?")) {
+          await deleteDoc(doc(db, "reviews", reviewId));
+          loadReviews();
+        }
+      }
+    });
 });
 
 function showAlert(message) {
