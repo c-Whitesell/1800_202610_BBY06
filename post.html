@@ -25,7 +25,7 @@
 
     <section class="text-dark text-center p-2">
       <div class="container">
-        <h1 class="display-5 text-body-emphasis">Create Post</h1>
+        <h1 class="display-5 text-body-emphasis herotext">Create Post</h1>
       </div>
     </section>
     <br />
@@ -60,45 +60,38 @@
 
 <div class="form-floating">
   <p class="h5">Dietary Tags</p>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="veg" value="Vegetarian">
-  <label class="form-check-label" for="veg">Vegetarian</label>
-</div>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="nutFree" value="Nut-free">
-  <label class="form-check-label" for="nutFree">Nut-free</label>
-</div>
+<div class="d-flex flex-wrap gap-2">
+  
+  <input type="checkbox" class="btn-check" id="veg" name="dietary" value="Vegetarian" autocomplete="off">
+  <label class="btn btn-primary" for="veg">Vegetarian</label>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="vegan" value="Vegan">
-  <label class="form-check-label" for="vegan">Vegan</label>
-</div>
+  <input type="checkbox" class="btn-check" id="nutFree" name="dietary" value="Nut-free" autocomplete="off">
+  <label class="btn btn-primary" for="nutFree">Nut-free</label>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="glutenFree" value="Almost Gluten-free">
-  <label class="form-check-label" for="glutenFree">Almost Gluten-free</label>
-</div>
+  <input type="checkbox" class="btn-check" id="vegan" name="dietary" value="Vegan" autocomplete="off">
+  <label class="btn btn-primary" for="vegan">Vegan</label>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="peanutFree" value="Peanut-free">
-  <label class="form-check-label" for="peanutFree">Peanut-free</label>
-</div>
+  <input type="checkbox" class="btn-check" id="glutenFree" name="dietary" value="Almost Gluten-free" autocomplete="off">
+  <label class="btn btn-primary" for="glutenFree">Almost Gluten-free</label>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="porkFree" value="Pork Free">
-  <label class="form-check-label" for="porkFree">Pork-Free</label>
-</div>
+  <input type="checkbox" class="btn-check" id="cilantro" name="dietary" value="Cilantro" autocomplete="off">
+  <label class="btn btn-primary" for="cilantro">Cilantro</label>
 
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="dietary" id="dairyAlt" value="Dairy Alternative">
-  <label class="form-check-label" for="dairyAlt">Alternative Dairy</label>
-</div>
+  <input type="checkbox" class="btn-check" id="peanutFree" name="dietary" value="Peanut-free" autocomplete="off">
+  <label class="btn btn-primary" for="peanutFree">Peanut-free</label>
 
+  <input type="checkbox" class="btn-check" id="porkFree" name="dietary" value="Pork Free" autocomplete="off">
+  <label class="btn btn-primary" for="porkFree">Pork-Free</label>
+
+  <input type="checkbox" class="btn-check" id="dairyAlt" name="dietary" value="Dairy Alternative" autocomplete="off">
+  <label class="btn btn-primary" for="dairyAlt">Alternative Dairy</label>
+
+</div>
 
 <!--File input-->
 <div class="container py-3">
-  <input type="file" id="inputImage" accept="image/*" />
+  <input type="file" id="inputImage" accept="image/*" required />
   <img id="mypic-goes-here" width=100 height=100 />
 </div>
 

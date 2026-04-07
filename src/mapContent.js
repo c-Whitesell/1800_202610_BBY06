@@ -121,6 +121,7 @@ getFirestoreRestaurants().then((restaurants) => {
             return;
           }
 
+          //Routing done by google
           const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${node.lat},${node.lon}&travelmode=driving`;
           window.open(googleMapsUrl, "_blank");
         });
@@ -128,6 +129,7 @@ getFirestoreRestaurants().then((restaurants) => {
     });
   }
 });
+//This is the user location
 map.locate({ setView: true, maxZoom: 16 });
 
 function onLocationFound(e) {
@@ -142,6 +144,7 @@ function onLocationFound(e) {
 
 map.on("locationfound", onLocationFound);
 
+//Creates the new post button and sets location
 L.Control.MyCustomButton = L.Control.extend({
   options: {
     position: "bottomleft", // Position the control in the bottom left
@@ -178,11 +181,10 @@ L.Control.MyCustomButton = L.Control.extend({
   },
 });
 
-// Add the new control to the map
+//Adds the Favorite button
 let myCustomButton = new L.Control.MyCustomButton();
 myCustomButton.addTo(map);
 
-// Favourites button
 L.Control.FavouritesButton = L.Control.extend({
   options: {
     position: "bottomleft",

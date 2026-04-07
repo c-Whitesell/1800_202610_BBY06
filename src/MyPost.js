@@ -10,10 +10,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
-// -------------------------------------------------------------
-// Auth state: wait for Firebase to resolve the current user,
-// then fetch their posts.
-// -------------------------------------------------------------
+// Uses Auth and then handles posts creation.
 onAuthStateChanged(auth, (user) => {
   if (user) {
     fetchUserPosts(user.uid);
@@ -26,11 +23,7 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// -------------------------------------------------------------
-// fetchUserPosts(userId)
-// Queries Firestore for all posts where authorId == userId.
-// FIX: make sure your addDoc call always saves authorId: user.uid
-// -------------------------------------------------------------
+//Uses post info and Auth to show the currently logged in user their posts.
 async function fetchUserPosts(userId) {
   const postsContainer = document.getElementById("posts-container");
   try {
@@ -53,12 +46,8 @@ async function fetchUserPosts(userId) {
   }
 }
 
-// -------------------------------------------------------------
-// displayPostsOnPage(posts)
-// Renders each post as a card with inline Edit/Save/Delete.
-// FIX: field names now match what main.js saves:
-//   foodTitle, price, location, description
-// -------------------------------------------------------------
+// Shows user their posts on the page
+// gives the user the ability to edit or delete a post from this page
 function displayPostsOnPage(posts) {
   const postsContainer = document.getElementById("posts-container");
   if (!postsContainer) return;
@@ -198,10 +187,7 @@ function displayPostsOnPage(posts) {
   });
 }
 
-// -------------------------------------------------------------
-// handleDelete(postId, cardElement)
 // Removes the post from Firestore and the DOM.
-// -------------------------------------------------------------
 async function handleDelete(postId, cardElement) {
   if (!confirm("Delete this post?")) return;
   try {
