@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const results = await searchTextFirebaseCollection(
             queryText,
-            "posts",
+            "restaurants",
           );
           renderResults(results, resultsDropdown);
         } catch (error) {
@@ -89,12 +89,17 @@ document.addEventListener("DOMContentLoaded", () => {
           li.innerHTML = `
                     <a class="dropdown-item d-flex justify-content-between align-items-center py-2" href="postDetails.html?id=${item.id}">
                         <div>
-                            <div class="fw-bold">${item.foodTitle}</div>
-                            <small class="text-muted">${item.location || "Unknown Location"}</small>
+                            <div class="fw-bold">${item.name}</div>
+                            <small class="text-muted">${item.address || "Unknown Location"}</small>
                         </div>
-                        <span class="badge rounded-pill bg-success">$${item.price}</span>
+                        
                     </a>
                 `;
+          // <div>
+          //             <div class="fw-bold">${item.foodTitle}</div>
+          //             <small class="text-muted">${item.location || "Unknown Location"}</small>
+          //         </div>
+          //<span class="badge rounded-pill bg-success">$${item.price}</span>
           container.appendChild(li);
         });
       }
