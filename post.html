@@ -8,10 +8,15 @@
       rel="stylesheet"
     />
     <!-- <link rel="stylesheet" href="./src/styles/style.css" /> -->
+<link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete@^1/styles/minimal.css">
+
     <title>Food Post · Thoughtful Food</title>
 
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
+
+    
+
   </head>
 
   <body>
@@ -40,8 +45,12 @@
 </div>
 
 <div class="form-floating mb-3">
-  <input type="text" class="form-control" id="location" placeholder="Location">
-  <label for="location">Location</label>
+  <input type="text" class="form-control" id="restaurant" placeholder="Restaurant Name">
+  <label for="restaurant">Restaurant Name</label>
+</div>
+
+<div id="autocomplete" class="autocomplete-container form-floating mb-3">
+    
 </div>
 
 <div class="form-floating mb-3">
@@ -112,7 +121,11 @@
         </div>
     </div>
 
+
     <script type="module" src="./src/main.js"></script>
     <script type="module" src="./src/post.js"></script>
+
+    
+
   </body>
 </html>

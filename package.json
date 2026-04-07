@@ -11,6 +11,7 @@
     "vite": "^7.0.0"
   },
   "dependencies": {
+    "@geoapify/geocoder-autocomplete": "^3.0.1",
     "bootstrap": "^5.3.8",
     "firebase": "^12.11.0",
     "leaflet": "^1.9.4",
