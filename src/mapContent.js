@@ -54,15 +54,11 @@ async function getNearbyRestaurants(lat, lon, radius = 1000) {
   }
 }
 
-console.log(map.getZoom()); //each lvl is doubling
-console.log(map.getSize()); //x pixels and y pixels
-
-// 3. Example Usage:
 // Search for restaurants within 1km of a specific coordinate (e.g., Burnaby)
 getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
   if (restaurants) {
     console.log(`Found ${restaurants.length} restaurants.`);
-    // console.log(restaurants);
+
     restaurants.forEach((node) => {
       const marker = L.marker([node.lat, node.lon]).addTo(map);
 
