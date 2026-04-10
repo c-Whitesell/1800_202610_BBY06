@@ -157,7 +157,7 @@ L.Control.MyCustomButton = L.Control.extend({
     container.style.height = "50px";
     container.style.width = "100px";
     container.style.borderRadius = "50px";
-    container.style.backgroundColor = "blue";
+    container.style.backgroundColor = "#87A878";
     container.style.color = "white";
     // Add a click event listener
     L.DomEvent.on(container, "click", function (e) {
@@ -195,7 +195,7 @@ L.Control.FavouritesButton = L.Control.extend({
     container.style.height = "50px";
     container.style.width = "100px";
     container.style.borderRadius = "50px";
-    container.style.backgroundColor = "blue";
+    container.style.backgroundColor = "#87A878";
     container.style.color = "white";
     L.DomEvent.on(container, "click", function (e) {
       window.location.href = "/favourite.html";
