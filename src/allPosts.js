@@ -1,5 +1,5 @@
-import { db } from "./firebaseConfig.js";
-import { auth } from "./firebaseConfig.js";
+import { db } from './firebaseConfig.js';
+import { auth } from './firebaseConfig.js';
 import {
   doc,
   getDocs,
@@ -9,12 +9,14 @@ import {
   query,
   orderBy,
   where,
-} from "firebase/firestore";
-import * as bootstrap from "bootstrap";
+} from 'firebase/firestore';
+import * as bootstrap from 'bootstrap';
+import { fetchPostsByTags } from './filter.js';
+let activeFilters = [];
 
 // Calculate the average rating for each post
 async function getAverageRating(postId) {
-  const q = query(collection(db, "reviews"), where("postID", "==", postId));
+  const q = query(collection(db, 'reviews'), where('postID', '==', postId));
 
   const snapshot = await getDocs(q);
 
@@ -33,45 +35,46 @@ async function getAverageRating(postId) {
 }
 
 async function loadPosts() {
-  const container = document.getElementById("postsContainer");
+  const posts = await fetchPostsByTags(activeFilters, getAverageRating);
+  renderPosts(posts);
+}
 
-  const q = query(collection(db, "posts"));
-  const snapshot = await getDocs(q);
+window.viewPost = function (id) {
+  window.location.href = `postDetails.html?id=${id}`;
+};
 
-  container.innerHTML = "";
+document.addEventListener('DOMContentLoaded', loadPosts);
 
-  for (const docSnap of snapshot.docs) {
-    const post = docSnap.data();
-    const id = docSnap.id;
+// div.querySelector('.favourite-btn').addEventListener('click', (e) => {
+//   const icon = e.currentTarget.querySelector('.material-icons');
+//   icon.textContent =
+//     icon.textContent === 'favorite_border' ? 'favorite' : 'favorite_border';
+// });
 
-    // get average rating
-    const avgRating = await getAverageRating(id);
+function renderPosts(posts) {
+  const container = document.getElementById('postsContainer');
+  container.innerHTML = '';
 
-    // build stars
-    let starsHTML = "";
+  for (const post of posts) {
+    let starsHTML = '';
     for (let i = 1; i <= 5; i++) {
       starsHTML += `
         <span class="material-icons text-dark" style="font-size: 20px">
-          ${i <= Math.round(avgRating) ? "star" : "star_outline"}
+          ${i <= Math.round(post.avgRating) ? 'star' : 'star_outline'}
         </span>
       `;
     }
 
-    const div = document.createElement("div");
-    div.className = "col-12 col-md-6 col-lg-4 mb-4";
+    const div = document.createElement('div');
+    div.className = 'col-12 col-md-6 col-lg-4 mb-4';
 
     div.innerHTML = `
 <div class="card h-100 shadow-sm">
 
   ${
     post.image
-      ? `
-  <img 
-    src="data:image/*;base64,${post.image}" 
-    class="card-img-top" 
-    "
-  >`
-      : ""
+      ? `<img src="data:image/*;base64,${post.image}" class="card-img-top">`
+      : ''
   }
 
   <div class="card-body">
@@ -80,26 +83,68 @@ async function loadPosts() {
 
     <p class="mb-2">${starsHTML}</p>
 
-    <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
-
- 
+    <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(', ')}</p>
   </div>
 
   <div class="card-footer bg-transparent border-0">
-    <button class="btn btn-success w-100" onclick="viewPost('${id}')">
+    <button class="btn bg-info w-100" onclick="viewPost('${post.id}')">
       View Details
     </button>
   </div>
 
 </div>
-`;
+    `;
 
     container.appendChild(div);
   }
 }
 
-window.viewPost = function (id) {
-  window.location.href = `postDetails.html?id=${id}`;
+//
+window.toggleFilter = async function (tag) {
+  if (activeFilters.includes(tag)) {
+    activeFilters = activeFilters.filter((t) => t !== tag);
+  } else {
+    activeFilters.push(tag);
+  }
+
+  await loadPosts(); // re-fetch from Firestore with filters
 };
 
-document.addEventListener("DOMContentLoaded", loadPosts);
+window.toggleDropdown = function () {
+  const dropdown = document.getElementById('filterDropdown');
+  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+};
+
+window.handleFilterChange = async function (checkbox) {
+  const tag = checkbox.value;
+
+  if (checkbox.checked) {
+    if (!activeFilters.includes(tag)) {
+      activeFilters.push(tag);
+    }
+  } else {
+    activeFilters = activeFilters.filter((t) => t !== tag);
+  }
+
+  await loadPosts();
+};
+
+window.clearFilters = async function () {
+  activeFilters = [];
+
+  // uncheck all boxes
+  document
+    .querySelectorAll("#filterDropdown input[type='checkbox']")
+    .forEach((cb) => (cb.checked = false));
+
+  await loadPosts();
+};
+
+//Closes filter drop down if doc is clicked
+document.addEventListener('click', function (e) {
+  const dropdown = document.getElementById('filterDropdown');
+
+  if (!dropdown.contains(e.target) && !e.target.closest('button')) {
+    dropdown.style.display = 'none';
+  }
+});
