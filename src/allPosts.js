@@ -86,6 +86,7 @@ async function loadPosts() {
   </div>
 
   <div class="card-footer bg-transparent border-0">
+    
     <button class="btn btn-success w-100" onclick="viewPost('${id}')">
       View Details
     </button>
@@ -103,3 +104,8 @@ window.viewPost = function (id) {
 };
 
 document.addEventListener("DOMContentLoaded", loadPosts);
+
+div.querySelector(".favourite-btn").addEventListener("click", (e) => {
+  const icon = e.currentTarget.querySelector(".material-icons");
+  icon.textContent = icon.textContent === "favorite_border" ? "favorite" : "favorite_border";
+});
