@@ -87,7 +87,7 @@ async function loadPosts() {
 
   <div class="card-footer bg-transparent border-0">
     
-    <button class="btn btn-success w-100" onclick="viewPost('${id}')">
+    <button class="btn bg-info w-100" onclick="viewPost('${id}')">
       View Details
     </button>
   </div>
