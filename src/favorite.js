@@ -6,60 +6,15 @@
     body {
       background: #fff275;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .fav-body {
       padding: 40px 20px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    .page-wrapper {
-      background: #f5f5f5;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 960px;
-      overflow: hidden;
-    }
-
-    /* Navbar */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 22px 40px;
-      background: #fff;
-    }
-    .logo {
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 0.05em;
-      color: #111;
-    }
-    .nav-links {
-      display: flex;
-      gap: 32px;
-    }
-    .nav-links a {
-      text-decoration: none;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: #111;
-      transition: opacity .2s;
-    }
-    .nav-links a:hover { opacity: 0.55; }
-    .nav-icons {
-      display: flex;
-      gap: 16px;
-      color: #111;
-      cursor: pointer;
-    }
-
-    /* Main */
-    .main-content {
-      padding: 48px 40px 40px;
-      background: #fff275;
-    }
     .section-title {
       font-size: 1.75rem;
       font-weight: 800;
@@ -68,31 +23,44 @@
       margin-bottom: 28px;
     }
 
-    /* Product grid */
+    /* Grid */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
       margin-bottom: 28px;
     }
-    .product-card { cursor: pointer; }
-    .product-card img {
+
+    /* Card */
+    .fav-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .fav-card img {
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
-      border-radius: 4px;
       display: block;
-      background: #e0e0e0;
     }
-    .product-info {
+    .fav-card-body {
+      padding: 14px 14px 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .fav-card-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-top: 10px;
     }
-    .product-name {
-      font-size: 0.85rem;
-      font-weight: 600;
+    .fav-card-name {
+      font-size: 1rem;
+      font-weight: 700;
       color: #111;
     }
     .heart-btn {
@@ -100,20 +68,37 @@
       border: none;
       cursor: pointer;
       padding: 0;
-      font-size: 1rem;
+      font-size: 1.2rem;
       line-height: 1;
       color: #e74c3c;
       transition: transform .15s;
     }
     .heart-btn:hover { transform: scale(1.2); }
     .heart-btn.inactive { color: #ccc; }
-    .product-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 4px;
+    .fav-card-address {
+      font-size: 0.82rem;
+      color: #888;
     }
-    .product-artist { font-size: 0.78rem; color: #888; }
-    .product-price  { font-size: 0.78rem; color: #555; }
+
+    /* View Details button */
+    .fav-card-footer {
+      padding: 0 14px 14px;
+    }
+    .btn-view {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background .2s;
+    }
+    .btn-view:hover { background: #1b5e20; }
 
     /* Load more */
     .load-more {
@@ -131,37 +116,29 @@
     }
     .load-more:hover { background: #111; color: #fff; }
 
-    /* Footer — sits on yellow background below the white card */
+    /* Footer */
     .site-footer {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 20px;
       padding: 24px 20px;
-      background: transparent;
-      width: 100%;
-      max-width: 960px;
-      margin: 0 auto;
     }
     .site-footer .material-icons { font-size: 1.3rem; color: #111; cursor: pointer; }
+    .site-footer a { color: #111; text-decoration: none; }
     .footer-copy { font-size: 0.78rem; color: #555; }
 
-    /* Responsive */
     @media (max-width: 640px) {
-      .product-grid { grid-template-columns: repeat(2, 1fr) !important; }
-      .nav-links { gap: 16px !important; }
-      .navbar, .main-content { padding-left: 20px !important; padding-right: 20px !important; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 420px) {
-      .product-grid { grid-template-columns: 1fr !important; }
-      .nav-links { display: none !important; }
+      .product-grid { grid-template-columns: 1fr; }
     }
   `;
   document.head.appendChild(style);
 })();
 
 // ── FIREBASE IMPORTS ──────────────────────────────────────────────────────────
-// The path "./firebaseConfig.js" works because both files are in the "src" folder
 import {
   doc,
   setDoc,
@@ -172,142 +149,116 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "./firebaseConfig.js";
 
-let currentUserId = null; // Store the logged-in user's ID
+let currentUserId = null;
 
-// ── Product Data ──────────────────────────────────────────────────────────────
+// Product Data
 const allProducts = [
   {
     id: 1,
     name: "Veggie Cafe",
-    artist: "4592 Nash Avenue",
-    price: "$32",
+    address: "4592 Nash Avenue",
     image:
       "https://th.bing.com/th/id/OIP.6xbT585YV2aY0FPosR9icgHaHa?w=203&h=203&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: false, // Defaulting all to false initially
   },
   {
     id: 2,
     name: "Salads Corner",
-    artist: "4563 Yasas Drive",
-    price: "$17",
+    address: "4563 Yasas Drive",
     image:
       "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=400&q=80",
-    liked: false,
   },
   {
     id: 3,
     name: "Lentil Market",
-    artist: "4974 Connor Street",
-    price: "$23",
+    address: "4974 Connor Street",
     image:
       "https://th.bing.com/th/id/OIP.vCalokOuknlIeQrTuyQS7wHaFE?w=234&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: false,
   },
   {
     id: 4,
     name: "Speckled Corner",
-    artist: "8472 Austin Avenue",
-    price: "$34",
+    address: "8472 Austin Avenue",
     image:
       "https://th.bing.com/th/id/OIP.mzRCkF8hiT8J8u1R9DeeBgHaE7?w=297&h=198&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: false,
   },
   {
     id: 5,
     name: "Celery Club",
-    artist: "8719 Josh Drive",
-    price: "$21",
+    address: "8719 Josh Drive",
     image:
       "https://th.bing.com/th/id/OIP.W6TChWlKXrIHh6w4Y1rLoAHaHa?w=198&h=198&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: false,
   },
   {
     id: 6,
     name: "Indigo Palace",
-    artist: "9838 Vancouver Way",
-    price: "$32",
+    address: "9838 Vancouver Way",
     image:
       "https://th.bing.com/th/id/OIP.WzQNvsjdHwzIny_cZGRMFAHaFc?w=226&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3",
-    liked: false,
   },
 ];
 
-// ── State ─────────────────────────────────────────────────────────────────────
 const BATCH = 3;
 let visibleCount = BATCH;
 const likedState = {};
-
-// Initialize state to false for all products
 allProducts.forEach((p) => (likedState[p.id] = false));
 
-// ── FIREBASE: Sync initial state on load ──────────────────────────────────────
+// ── Sync liked state from Firestore on auth ───────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUserId = user.uid;
     try {
-      // Fetch this specific user's favourites from Firestore
-      const favRef = collection(db, "users", currentUserId, "favourites");
-      const snapshot = await getDocs(favRef);
-
-      // Update the likedState object with data from the database
-      snapshot.forEach((doc) => {
-        const favData = doc.data();
-        if (favData.itemId) {
-          likedState[Number(favData.itemId)] = true;
-        }
+      const snapshot = await getDocs(
+        collection(db, "users", currentUserId, "favourites"),
+      );
+      snapshot.forEach((d) => {
+        const data = d.data();
+        if (data.itemId) likedState[Number(data.itemId)] = true;
       });
-
-      // Re-render the products now that we know the true liked state
-      renderProducts();
-    } catch (error) {
-      console.error("Error fetching favourites:", error);
+    } catch (err) {
+      console.error("Error fetching favourites:", err);
     }
   } else {
     currentUserId = null;
-    console.log("No user logged in. Showing default state.");
-    renderProducts();
   }
+  renderProducts();
 });
 
-// ── Build a single product card ───────────────────────────────────────────────
+// ── Build a single card ───────────────────────────────────────────────────────
 function createCard(product) {
   const card = document.createElement("div");
-  card.className = "product-card";
-  card.dataset.id = product.id;
-
+  card.className = "fav-card";
   card.innerHTML = `
     <img src="${product.image}" alt="${product.name}" loading="lazy" />
-    <div class="product-info">
-      <span class="product-name">${product.name}</span>
-      <button class="heart-btn ${likedState[product.id] ? "" : "inactive"}"
-              aria-label="Toggle favourite" data-id="${product.id}">&#10084;</button>
+    <div class="fav-card-body">
+      <div class="fav-card-header">
+        <span class="fav-card-name">${product.name}</span>
+        <button class="heart-btn ${likedState[product.id] ? "" : "inactive"}"
+                aria-label="Toggle favourite" data-id="${product.id}">&#10084;</button>
+      </div>
+      <span class="fav-card-address">${product.address}</span>
     </div>
-    <div class="product-meta">
-      <span class="product-artist">${product.artist}</span>
-      <span class="product-price">${product.price}</span>
+    <div class="fav-card-footer">
+      <button class="btn-view" data-id="${product.id}">View Details</button>
     </div>
   `;
   return card;
 }
 
-// ── Render into the existing #productGrid in your HTML ────────────────────────
+// ── Render grid ───────────────────────────────────────────────────────────────
 function renderProducts() {
   const grid = document.getElementById("productGrid");
   const btn = document.getElementById("loadMoreBtn");
-  if (!grid || !btn) return;
-
+  if (!grid) return;
   grid.innerHTML = "";
   allProducts
     .slice(0, visibleCount)
     .forEach((p) => grid.appendChild(createCard(p)));
-  btn.style.display = visibleCount >= allProducts.length ? "none" : "block";
+  if (btn)
+    btn.style.display = visibleCount >= allProducts.length ? "none" : "block";
 }
 
-// ── Wire up Load More & Firebase Clicks ───────────────────────────────────────
+// ── Wire up events ────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  // We wait for Firebase auth state to load before initial render,
-  // so we don't call renderProducts() immediately here anymore.
-
   const btn = document.getElementById("loadMoreBtn");
   const grid = document.getElementById("productGrid");
 
@@ -316,50 +267,40 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProducts();
   });
 
-  // Heart toggle — event delegation on the grid
   grid?.addEventListener("click", async (e) => {
+    // Heart toggle
     const heartBtn = e.target.closest(".heart-btn");
-    if (!heartBtn) return;
-
-    // If no one is logged in, alert them
-    if (!currentUserId) {
-      alert("Please log in to save favourites!");
+    if (heartBtn) {
+      if (!currentUserId) {
+        alert("Please log in to save favourites!");
+        return;
+      }
+      const id = Number(heartBtn.dataset.id);
+      const isNowLiked = !likedState[id];
+      likedState[id] = isNowLiked;
+      heartBtn.style.color = isNowLiked ? "#e74c3c" : "#ccc";
+      heartBtn.classList.toggle("inactive", !isNowLiked);
+      try {
+        const docRef = doc(
+          db,
+          "users",
+          currentUserId,
+          "favourites",
+          id.toString(),
+        );
+        isNowLiked
+          ? await setDoc(docRef, { itemId: id, addedAt: new Date() })
+          : await deleteDoc(docRef);
+      } catch (err) {
+        console.error("Error updating database:", err);
+      }
       return;
     }
 
-    const id = Number(heartBtn.dataset.id);
-    const isNowLiked = !likedState[id]; // Determine the new state
-
-    // 1. Update the UI immediately
-    likedState[id] = isNowLiked;
-    heartBtn.style.color = isNowLiked ? "#e74c3c" : "#ccc";
-    heartBtn.classList.toggle("inactive", !isNowLiked);
-
-    // 2. FIREBASE: Save the change to the database
-    try {
-      const docRef = doc(
-        db,
-        "users",
-        currentUserId,
-        "favourites",
-        id.toString(),
-      );
-
-      if (isNowLiked) {
-        // Add to database
-        await setDoc(docRef, {
-          itemId: id,
-          addedAt: new Date(),
-        });
-      } else {
-        // Remove from database
-        await deleteDoc(docRef);
-      }
-    } catch (error) {
-      console.error("Error updating database:", error);
-      // Optional: Revert UI if database fails
-      // likedState[id] = !isNowLiked;
-      // renderProducts();
+    // View Details — goes to new restaurant details page
+    const viewBtn = e.target.closest(".btn-view");
+    if (viewBtn) {
+      window.location.href = `favoriteDetails.html?id=${viewBtn.dataset.id}`;
     }
   });
 });

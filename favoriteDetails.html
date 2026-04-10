@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>Restaurant Details · Thoughtful Food</title>
+
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-color: #fff275;
+        --secondary-color: #758e4f;
+        --text-color: #4f1802;
+      }
+
+      body {
+        background-color: var(--primary-color);
+      }
+
+      .bg-info {
+        background-color: var(--secondary-color) !important;
+      }
+
+      .navbar-brand {
+        color: var(--text-color) !important;
+      }
+
+      /* Star rating colours */
+      .star {
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .star.selected,
+      .text-warning {
+        color: gold !important;
+      }
+    </style>
+  </head>
+  <body>
+    <site-navbar></site-navbar>
+
+    <div class="container mt-5">
+      <h2 class="my-4">Restaurant</h2>
+
+      <!-- Alert -->
+      <div id="alertContainer"></div>
+
+      <!-- Restaurant info card -->
+      <div class="card shadow-sm mb-4">
+        <img
+          id="restaurantImage"
+          class="card-img-top"
+          style="max-height: 320px; object-fit: cover"
+        />
+        <div class="card-body">
+          <h2 id="restaurantName"></h2>
+          <p class="text-muted" id="restaurantAddress"></p>
+        </div>
+      </div>
+
+      <!-- About section -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h4 class="mb-3">About</h4>
+          <p><strong>Food:</strong> Vegetarian</p>
+          <p><strong>Hours:</strong> Mon–Sun 10am-4pm</p>
+          <p><strong>Phone:</strong> (123) 456-7890</p>
+          <p>
+            <strong>Description:</strong> A cozy family-run cafe serving
+            authentic dishes made from fresh local ingredients.
+          </p>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h4>Reviews</h4>
+          <div id="reviewsContainer"></div>
+        </div>
+      </div>
+
+      <!-- Write a Review -->
+      <div class="card shadow-sm mb-5">
+        <div class="card-body">
+          <h4>Write A Review</h4>
+          <form id="reviewForm">
+            <div class="mb-3">
+              <textarea
+                class="form-control"
+                id="reviewText"
+                rows="3"
+                placeholder="Write your review..."
+              ></textarea>
+            </div>
+            <div id="ratingContainer" class="mb-3">
+              <span class="material-icons star" data-value="1"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="2"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="3"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="4"
+                >star_outline</span
+              >
+              <span class="material-icons star" data-value="5"
+                >star_outline</span
+              >
+            </div>
+            <p id="avgRating" class="text-secondary mb-3"></p>
+            <button class="btn btn-success">Submit Review</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./favoriteDetails.js"></script>
+  </body>
+</html>

@@ -1,24 +1,33 @@
-// These are the imports for the app functionality
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import './styles/style.css';
 import 'leaflet/dist/leaflet.css';
 import { createIframePopup } from './utils.js'; // Note the relative path and file extension
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
-// leaflet import
 import * as L from 'leaflet';
-import 'leaflet-routing-machine';
+
+import { db } from './firebaseConfig.js';
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
+  arrayUnion,
+  query, // <--- Add this
+  where, // <--- Add this
+  limit, // <--- Add this
+  getDocs, // <--- You'll need this to actually run the query
+} from 'firebase/firestore';
+
+console.log('L', L);
 
 let userLat = null;
 let userLng = null;
-let routingControl = null;
 
-//This is the creation of the map view and location
 const map = L.map('map').setView([49.236, -123.025], 13);
 
-//Creates the map layer
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
@@ -54,16 +63,49 @@ async function getNearbyRestaurants(lat, lon, radius = 1000) {
   }
 }
 
+async function getFirestoreRestaurants() {
+  const querySnapshot = await getDocs(collection(db, 'restaurants'));
+  const restaurantList = [];
+
+  querySnapshot.forEach((doc) => {
+    // Push a custom object into our array
+    restaurantList.push({
+      id: doc.id,
+      name: doc.data().name,
+      address: doc.data().address,
+      lat: doc.data().lat,
+      lon: doc.data().lon,
+    });
+  });
+  return restaurantList;
+}
+
+getFirestoreRestaurants();
+
+console.log(map.getZoom()); //each lvl is doubling
+console.log(map.getSize()); //x pixels and y pixels
+
+// 3. Example Usage:
 // Search for restaurants within 1km of a specific coordinate (e.g., Burnaby)
-getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
+//getNearbyRestaurants(49.236, -123.025, 1000).then((restaurants) => {
+getFirestoreRestaurants().then((restaurants) => {
   if (restaurants) {
     console.log(`Found ${restaurants.length} restaurants.`);
 
     restaurants.forEach((node) => {
+      // console.log(node.lat);
+      // console.log(node.lon);
+      // L.marker([node.lat, node.lon]).addTo(map);
+      // .bindPopup("A pretty CSS popup.<br> Easily customizable.")
+      // .openPopup();
+      //
+      //<b>${node.tags?.name || "Restaurant"}</b><br>
+
       const marker = L.marker([node.lat, node.lon]).addTo(map);
 
       marker.bindPopup(`
-      <b>${node.tags?.name || 'Restaurant'}</b><br>
+      <b>${node.name || 'Restaurant'}</b><br>
+      <i>${node.address || ''}</i><br>
       <button class="route-btn">Route Here</button>
       `);
       marker.on('popupopen', (e) => {
@@ -102,7 +144,7 @@ map.on('locationfound', onLocationFound);
 //Creates the new post button and sets location
 L.Control.MyCustomButton = L.Control.extend({
   options: {
-    position: 'bottomleft',
+    position: 'bottomleft', // Position the control in the bottom left
   },
 
   onAdd: function (map) {
@@ -116,6 +158,9 @@ L.Control.MyCustomButton = L.Control.extend({
     container.style.color = 'white';
     // Add a click event listener
     L.DomEvent.on(container, 'click', function (e) {
+      // alert('Button clicked!');
+      // add on click pop up here
+      //window.location.href = "/post.html";
       createIframePopup(container, '/postPopup.html');
       // Prevent event from propagating to the map
       L.DomEvent.stop(e);
