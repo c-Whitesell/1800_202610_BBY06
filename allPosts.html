@@ -24,6 +24,56 @@
   <body>
     <site-navbar></site-navbar>
 
+    <div class="mb-3 position-relative" style="max-width: 300px">
+      <button class="btn btn-outline-primary w-100" onclick="toggleDropdown()">
+        Filter Dietary Tags
+      </button>
+
+      <div
+        id="filterDropdown"
+        class="border rounded p-3 bg-white shadow"
+        style="display: none; position: absolute; width: 100%; z-index: 1000"
+      >
+        <label
+          ><input
+            type="checkbox"
+            value="Gluten-Free"
+            onchange="handleFilterChange(this)"
+          />
+          Gluten-Free</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            value="Vegan"
+            onchange="handleFilterChange(this)"
+          />
+          Vegan</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            value="Dairy-Free"
+            onchange="handleFilterChange(this)"
+          />
+          Dairy-Free</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            value="Vegetarian"
+            onchange="handleFilterChange(this)"
+          />
+          Vegetarian</label
+        ><br />
+
+        <hr />
+
+        <button class="btn btn-sm btn-secondary w-100" onclick="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
     <div class="container">
       <h2 class="my-4">All Posts</h2>
       <div class="row" id="postsContainer"></div>
