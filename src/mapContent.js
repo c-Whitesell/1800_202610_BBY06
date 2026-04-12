@@ -1,13 +1,13 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
-import './styles/style.css';
-import 'leaflet/dist/leaflet.css';
-import { createIframePopup } from './utils.js'; // Note the relative path and file extension
-import 'leaflet/dist/leaflet.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
+import "./styles/style.css";
+import "leaflet/dist/leaflet.css";
+import { createIframePopup } from "./utils.js"; // Note the relative path and file extension
+import "leaflet/dist/leaflet.css";
 
-import * as L from 'leaflet';
+import * as L from "leaflet";
 
-import { db } from './firebaseConfig.js';
+import { db } from "./firebaseConfig.js";
 import {
   doc,
   getDoc,
@@ -19,16 +19,16 @@ import {
   where, // <--- Add this
   limit, // <--- Add this
   getDocs, // <--- You'll need this to actually run the query
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
-console.log('L', L);
+console.log("L", L);
 
 let userLat = null;
 let userLng = null;
 
-const map = L.map('map').setView([49.236, -123.025], 13);
+const map = L.map("map").setView([49.236, -123.025], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -59,12 +59,15 @@ async function getNearbyRestaurants(lat, lon, radius = 1000) {
     const data = await response.json();
     return data.elements; // Array of restaurants [2]
   } catch (error) {
-    console.error('Error fetching data from Overpass API:', error);
+    console.error("Error fetching data from Overpass API:", error);
   }
 }
 
 async function getFirestoreRestaurants() {
-  const querySnapshot = await getDocs(collection(db, 'restaurants'));
+  const LIMIT = 30;
+  const qq = query(collection(db, "restaurants"), limit(LIMIT));
+  const querySnapshot = await getDocs(qq);
+
   const restaurantList = [];
 
   querySnapshot.forEach((doc) => {
@@ -80,7 +83,7 @@ async function getFirestoreRestaurants() {
   return restaurantList;
 }
 
-getFirestoreRestaurants();
+//getFirestoreRestaurants();
 
 console.log(map.getZoom()); //each lvl is doubling
 console.log(map.getSize()); //x pixels and y pixels
@@ -104,23 +107,23 @@ getFirestoreRestaurants().then((restaurants) => {
       const marker = L.marker([node.lat, node.lon]).addTo(map);
 
       marker.bindPopup(`
-      <b>${node.name || 'Restaurant'}</b><br>
-      <i>${node.address || ''}</i><br>
+      <b>${node.name || "Restaurant"}</b><br>
+      <i>${node.address || ""}</i><br>
       <button class="route-btn">Route Here</button>
       `);
-      marker.on('popupopen', (e) => {
+      marker.on("popupopen", (e) => {
         const popupNode = e.popup.getElement();
-        const btn = popupNode.querySelector('.route-btn');
+        const btn = popupNode.querySelector(".route-btn");
 
-        btn.addEventListener('click', () => {
+        btn.addEventListener("click", () => {
           if (!userLat || !userLng) {
-            alert('User location not ready yet');
+            alert("User location not ready yet");
             return;
           }
 
           //Routing done by google
           const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${node.lat},${node.lon}&travelmode=driving`;
-          window.open(googleMapsUrl, '_blank');
+          window.open(googleMapsUrl, "_blank");
         });
       });
     });
@@ -139,29 +142,29 @@ function onLocationFound(e) {
   L.circle(e.latlng, radius).addTo(map);
 }
 
-map.on('locationfound', onLocationFound);
+map.on("locationfound", onLocationFound);
 
 //Creates the new post button and sets location
 L.Control.MyCustomButton = L.Control.extend({
   options: {
-    position: 'bottomleft', // Position the control in the bottom left
+    position: "bottomleft", // Position the control in the bottom left
   },
 
   onAdd: function (map) {
     // Create the button element
-    let container = L.DomUtil.create('button', 'modalButton');
-    container.innerHTML = 'new post';
-    container.style.height = '50px';
-    container.style.width = '100px';
-    container.style.borderRadius = '50px';
-    container.style.backgroundColor = '#87A878';
-    container.style.color = 'white';
+    let container = L.DomUtil.create("button", "modalButton");
+    container.innerHTML = "new post";
+    container.style.height = "50px";
+    container.style.width = "100px";
+    container.style.borderRadius = "50px";
+    container.style.backgroundColor = "#87A878";
+    container.style.color = "white";
     // Add a click event listener
-    L.DomEvent.on(container, 'click', function (e) {
+    L.DomEvent.on(container, "click", function (e) {
       // alert('Button clicked!');
       // add on click pop up here
       //window.location.href = "/post.html";
-      createIframePopup(container, '/postPopup.html');
+      createIframePopup(container, "/postPopup.html");
       // Prevent event from propagating to the map
       L.DomEvent.stop(e);
     });
@@ -174,7 +177,7 @@ L.Control.MyCustomButton = L.Control.extend({
 
   onRemove: function (map) {
     // Clean up event listeners if the control is removed
-    L.DomEvent.off(this._container, 'click', function () {});
+    L.DomEvent.off(this._container, "click", function () {});
   },
 });
 
@@ -184,25 +187,25 @@ myCustomButton.addTo(map);
 
 L.Control.FavouritesButton = L.Control.extend({
   options: {
-    position: 'bottomleft',
+    position: "bottomleft",
   },
   onAdd: function (map) {
-    let container = L.DomUtil.create('button', 'favouritesButton');
-    container.innerHTML = 'Favourites';
-    container.style.height = '50px';
-    container.style.width = '100px';
-    container.style.borderRadius = '50px';
-    container.style.backgroundColor = '#87A878';
-    container.style.color = 'white';
-    L.DomEvent.on(container, 'click', function (e) {
-      window.location.href = '/favourite.html';
+    let container = L.DomUtil.create("button", "favouritesButton");
+    container.innerHTML = "Favourites";
+    container.style.height = "50px";
+    container.style.width = "100px";
+    container.style.borderRadius = "50px";
+    container.style.backgroundColor = "#87A878";
+    container.style.color = "white";
+    L.DomEvent.on(container, "click", function (e) {
+      window.location.href = "/favourite.html";
       L.DomEvent.stop(e);
     });
     L.DomEvent.disableClickPropagation(container);
     return container;
   },
   onRemove: function (map) {
-    L.DomEvent.off(this._container, 'click', function () {});
+    L.DomEvent.off(this._container, "click", function () {});
   },
 });
 

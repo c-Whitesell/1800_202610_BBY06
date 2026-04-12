@@ -2,7 +2,6 @@ import { db } from "./firebaseConfig.js";
 import { auth } from "./firebaseConfig.js";
 import {
   doc,
-  getDoc,
   getDocs,
   collection,
   addDoc,
@@ -10,7 +9,13 @@ import {
   query,
   orderBy,
   where,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  setDoc,
 } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as bootstrap from "bootstrap";
 import { fetchPostsByTags, multiQuery } from "./filter.js";
 let activeFilters = [];
@@ -35,46 +40,67 @@ async function getAverageRating(postId) {
   return total / count;
 }
 
+async function getUserFavorites(uid) {
+  const userRef = doc(db, "users", uid);
+
+  try {
+    // 2. Fetch the document snapshot
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      // 3. Extract the 'favorites' field (default to empty array if it doesn't exist)
+      const favorites = userSnap.data().favorites || [];
+      console.log("User Favorites:", favorites);
+      return favorites;
+    } else {
+      console.log("No user document found for this UID.");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return [];
+  }
+}
+
+let uid;
+let username;
+let userFavorites = [];
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    uid = user.uid;
+    username = user.displayName;
+    userFavorites = await getUserFavorites(uid);
+    loadPosts();
+  } else {
+    userFavorites = [];
+    loadPosts();
+  }
+});
+
 async function loadPosts() {
   //const posts = await fetchPostsByTags(activeFilters, getAverageRating);
-  console.log(getURLQueryType());
-  console.log(getURLId());
-  if (getURLQueryType() == "restaurants") {
-    //changing page title
-    // 1. Create a reference to the specific document
-    const docRef = doc(db, getURLQueryType(), getURLId());
-    // 2. Fetch the document snapshot
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      // 3. Extract only the specific fields you need
-      const data = docSnap.data();
-      const rest_name = data.name;
-      const rest_adress = data.address;
-      console.log(rest_name);
-      console.log(rest_adress);
-      // 1. Select the existing H2
-      const titleElement = document.getElementById("page-title");
-      // 2. Change the text of the H2
-      titleElement.textContent = rest_name;
-      // 3. Create and insert the H3 right after the H2
-      const addressElement = document.createElement("h3");
-      addressElement.textContent = rest_adress;
-      titleElement.after(addressElement);
-    } else {
-      console.log("No such restaurant found!");
-    }
+  //console.log(getURLQueryType());
+  //console.log(getURLId());
+  const auth = getAuth();
+
+  if (getURLQueryType() == "users" && uid != undefined) {
+    console.log(uid);
+    // 1. Select the existing H2
+    const titleElement = document.getElementById("page-title");
+    // 2. Change the text of the H2
+    titleElement.textContent = username + "'s Favorite Restaurants";
 
     var thisQuery = await multiQuery(
       db,
-      "posts",
+      "restaurants",
       activeFilters,
-      999, //limit
+      30, //limit
       getURLQueryType(),
-      getURLId(),
-      "posts",
+      uid,
+      "favorites",
     );
   } else {
-    var thisQuery = await multiQuery(db, "posts", activeFilters);
+    var thisQuery = await multiQuery(db, "restaurants", activeFilters, 30);
   }
 
   const snapshot = await getDocs(thisQuery);
@@ -87,15 +113,65 @@ async function loadPosts() {
     posts.push({
       ...post,
       id: docSnap.id,
-      avgRating: await getAverageRating(docSnap.id),
+      fav: userFavorites.includes(docSnap.id),
+      //avgRating: await getAverageRating(docSnap.id),
     });
+
+    //console.log(posts);
   }
   renderPosts(posts);
 }
 
 window.viewPost = function (id) {
-  window.location.href = `postDetails.html?id=${id}`;
+  window.location.href = `allPosts.html?id=${id}&type=restaurants`;
 };
+
+window.toggleFavorite = async (postId) => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please log in to favorite posts!");
+    return;
+  }
+
+  const result = await toggleFavoriteLogic(user.uid, postId);
+
+  const icon = document.querySelector(`#fav-${postId} span`);
+  //console.log(icon);
+  if (result === "added") {
+    icon.textContent = "favorite";
+  } else {
+    icon.textContent = "favorite_border";
+  }
+};
+
+async function toggleFavoriteLogic(uid, postId) {
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
+
+  // 1. If user doc doesn't exist, create it and add the favorite
+  if (!userSnap.exists()) {
+    await setDoc(userRef, { favorites: [postId] });
+    return "added";
+  }
+
+  const userData = userSnap.data();
+  const favorites = userData.favorites || [];
+
+  // 2. Check if already favorited
+  if (favorites.includes(postId)) {
+    // Already exists -> Remove it
+    await updateDoc(userRef, {
+      favorites: arrayRemove(postId),
+    });
+    return "removed";
+  } else {
+    // Doesn't exist -> Add it
+    await updateDoc(userRef, {
+      favorites: arrayUnion(postId),
+    });
+    return "added";
+  }
+}
 
 document.addEventListener("DOMContentLoaded", loadPosts());
 
@@ -110,14 +186,14 @@ function renderPosts(posts) {
   container.innerHTML = "";
 
   for (const post of posts) {
-    let starsHTML = "";
+    /*     let starsHTML = "";
     for (let i = 1; i <= 5; i++) {
       starsHTML += `
         <span class="material-icons text-dark" style="font-size: 20px">
           ${i <= Math.round(post.avgRating) ? "star" : "star_outline"}
         </span>
       `;
-    }
+    } */
 
     const div = document.createElement("div");
     div.className = "col-12 col-md-6 col-lg-4 mb-4";
@@ -132,14 +208,19 @@ function renderPosts(posts) {
       : ""
   }
 
-  <div class="card-body">
-    <h5 class="card-title">${post.foodTitle}</h5>
-    <p class="card-text">${post.description}</p>
-
-    <p class="mb-2">${starsHTML}</p>
-
-    <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
-  </div>
+<div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="card-title mb-0">${post.name}</h5>
+      <button 
+        id="fav-${post.id}" 
+        class="btn btn-link p-0 text-danger" 
+        onclick="toggleFavorite('${post.id}')"
+        style="text-decoration: none;"
+      >
+        <span class="material-icons">${post.fav ? "favorite" : "favorite_border"}</span>
+      </button>
+    </div>
+     <p class="card-text">${post.address}</p>
 
   <div class="card-footer bg-transparent border-0">
     <button class="btn bg-info w-100" onclick="viewPost('${post.id}')">
