@@ -227,12 +227,7 @@ import { multiQuery } from './filter.js';
 async function loadFilteredMarkers() {
   clearMarkers();
 
-  const q = await multiQuery(
-    db,
-    'restaurants',
-    activeFilters,
-    50, // limit
-  );
+  const q = await multiQuery(db, 'restaurants', activeFilters, 50);
 
   const snapshot = await getDocs(q);
 
