@@ -282,7 +282,7 @@ window.handleFilterChange = async function (checkbox) {
     activeFilters = activeFilters.filter((t) => t !== tag);
   }
 
-  await loadFilteredMarkers(); // 🔥 THIS is the magic
+  await loadFilteredMarkers();
 };
 
 window.clearFilters = async function () {
