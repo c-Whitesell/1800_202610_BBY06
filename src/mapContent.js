@@ -195,15 +195,15 @@ L.Control.FavouritesButton = L.Control.extend({
     position: 'bottomleft',
   },
   onAdd: function (map) {
-    let container = L.DomUtil.create('button', 'favouritesButton');
-    container.innerHTML = 'Favourites';
-    container.style.height = '50px';
-    container.style.width = '100px';
-    container.style.borderRadius = '50px';
-    container.style.backgroundColor = '#87A878';
-    container.style.color = 'white';
-    L.DomEvent.on(container, 'click', function (e) {
-      window.location.href = '/favourite.html';
+    let container = L.DomUtil.create("button", "favouritesButton");
+    container.innerHTML = "Favourites";
+    container.style.height = "50px";
+    container.style.width = "100px";
+    container.style.borderRadius = "50px";
+    container.style.backgroundColor = "#87A878";
+    container.style.color = "white";
+    L.DomEvent.on(container, "click", function (e) {
+      window.location.href = "/allRestaurants.html";
       L.DomEvent.stop(e);
     });
     L.DomEvent.disableClickPropagation(container);
