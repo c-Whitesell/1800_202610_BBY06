@@ -13,7 +13,19 @@
     <site-navbar></site-navbar>
 
     <div id="map"></div>
+    <div id="filterContainer" style="position:absolute; bottom:65px; right:20px; z-index:1000;">
+      <button onclick="toggleDropdown()" class="btn btn-success">
+        Filters
+      </button>
 
+      <div id="filterDropdown" style="display:none; background:white; padding:10px; border-radius:8px;">
+        <label><input type="checkbox" value="vegan" onchange="handleFilterChange(this)"> Vegan</label><br>
+        <label><input type="checkbox" value="gluten-free" onchange="handleFilterChange(this)"> Gluten Free</label><br>
+        <label><input type="checkbox" value="vegetarian" onchange="handleFilterChange(this)"> Vegetarian</label><br>
+
+        <button onclick="clearFilters()" class="btn btn-sm btn-secondary mt-2">Clear</button>
+      </div>
+    </div>
     <!-- Floating Search Field -->
     <div
       class="position-absolute start-50 translate-middle-x mt-3"
