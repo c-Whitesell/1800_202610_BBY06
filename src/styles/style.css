@@ -1,14 +1,14 @@
 :root {
-  --primary-color: #C7CCB9;
+  --primary-color: #c7ccb9;
 
-  --secondary-color: #87A878;
+  --secondary-color: #87a878;
 
   --accent-color: #3aaed8;
 
   --text-color: #4f1802;
 }
 
-  /* --primary-color: #F4EBBE;
+/* --primary-color: #F4EBBE;
 
   --secondary-color: #8BA6A9; */
 body {
@@ -291,4 +291,23 @@ body {
 .autocomplete-container {
   position: relative;
   overflow: visible;
+}
+
+/* Style the side menu background */
+.offcanvas {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  width: 300px; /* Adjust width as needed */
+}
+
+/* Ensure links are the right color */
+.offcanvas .nav-link {
+  color: var(--text-color);
+  font-size: 1.2rem; /* Make them slightly bigger for mobile tapping */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Subtle separators */
+}
+
+/* Style the close button */
+.btn-close {
+  color: var(--accent-color); /* Adjusts X button color to match theme */
 }

@@ -21,42 +21,40 @@ class SiteNavbar extends HTMLElement {
             </a>
 
             <button class="navbar-toggler" type="button" 
-            data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              
-              <div class="ms-auto d-flex align-items-center gap-2" id="rightControls">
-              <ul class="navbar-nav ms-auto">
-                
-                <li class="nav-item">
-                  <strong><a class="nav-link" href="/main.html">Home</a></strong>
-                </li>
+           <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+  
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
 
-                <li class="nav-item">
-                  <strong><a class="nav-link" href="./MyPosts.html">My Posts</a></strong>
-                </li>
-                
-                <li class="nav-item">
-                  <strong><a class="nav-link" href="./allRestaurants.html?type=users">Favourites</a></strong>
-                </li>
-
-                <li class="nav-item">
-                  <strong><a class="nav-link" href="./allPosts.html" title="View Posts">Posts</a></strong>
-                </li>
-
-                <li class="nav-item">
-                  <strong><a class="nav-link" href="./allRestaurants.html" title="View Restaurants">Restaurants</a></strong>
-                </li>
-
-                <div id="authControls" class="auth-controls d-flex align-items-center gap-2 my-2 my-lg-0">
-                  <!-- populated by JS -->
-                </div>
-                </ul>
-              </div>
-
-            </div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+      <li class="nav-item">
+        <strong><a class="nav-link" href="/main.html">Home</a></strong>
+      </li>
+      <li class="nav-item">
+        <strong><a class="nav-link" href="./MyPosts.html">My Posts</a></strong>
+      </li>
+      <li class="nav-item">
+        <strong><a class="nav-link" href="./allRestaurants.html?type=users">Favourites</a></strong>
+      </li>
+      <li class="nav-item">
+        <strong><a class="nav-link" href="./allPosts.html">Posts</a></strong>
+      </li>
+      <li class="nav-item">
+        <strong><a class="nav-link" href="./allRestaurants.html">Restaurants</a></strong>
+      </li>
+    </ul>
+    
+    <div id="authControls" class="auth-controls d-flex flex-column gap-2 mt-3">
+       </div>
+  </div>
+</div>
           </div>
         </nav>
         `;
