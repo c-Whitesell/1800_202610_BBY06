@@ -43,11 +43,11 @@ class SiteNavbar extends HTMLElement {
                 </li>
 
                 <li class="nav-item">
-                  <strong><a class="nav-link" href="./allPosts.html">View Posts</a></strong>
+                  <strong><a class="nav-link" href="./allPosts.html" title="View Posts">Posts</a></strong>
                 </li>
 
                 <li class="nav-item">
-                  <strong><a class="nav-link" href="./allRestaurants.html">View Restaurants</a></strong>
+                  <strong><a class="nav-link" href="./allRestaurants.html" title="View Restaurants">Restaurants</a></strong>
                 </li>
 
                 <div id="authControls" class="auth-controls d-flex align-items-center gap-2 my-2 my-lg-0">
