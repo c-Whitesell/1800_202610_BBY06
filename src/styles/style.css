@@ -1,12 +1,16 @@
 :root {
-  --primary-color: #fff275;
+  --primary-color: #C7CCB9;
 
-  --secondary-color: #758e4f;
+  --secondary-color: #87A878;
 
   --accent-color: #3aaed8;
 
   --text-color: #4f1802;
 }
+
+  /* --primary-color: #F4EBBE;
+
+  --secondary-color: #8BA6A9; */
 body {
   background-color: var(--primary-color);
 }
@@ -270,4 +274,21 @@ body {
 
 .star.selected {
   color: rgb(65, 65, 65);
+}
+
+/* Force the dropdown to the front */
+.geoapify-autocomplete-items {
+  z-index: 9999; /* Higher than almost everything else */
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Ensure the wrapper allows the dropdown to overflow its bounds */
+.autocomplete-container {
+  position: relative;
+  overflow: visible;
 }

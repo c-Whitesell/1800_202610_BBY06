@@ -1,6 +1,6 @@
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
-import { logoutUser } from '../authentication';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import { logoutUser } from "../authentication";
 
 class SiteNavbar extends HTMLElement {
   constructor() {
@@ -39,11 +39,15 @@ class SiteNavbar extends HTMLElement {
                 </li>
                 
                 <li class="nav-item">
-                  <strong><a class="nav-link" href="./favourite.html">Favourites</a></strong>
+                  <strong><a class="nav-link" href="./allRestaurants.html?type=users">Favourites</a></strong>
                 </li>
 
                 <li class="nav-item">
-                  <strong><a class="nav-link" href="./allPosts.html">View Posts</a></strong>
+                  <strong><a class="nav-link" href="./allPosts.html" title="View Posts">Posts</a></strong>
+                </li>
+
+                <li class="nav-item">
+                  <strong><a class="nav-link" href="./allRestaurants.html" title="View Restaurants">Restaurants</a></strong>
                 </li>
 
                 <div id="authControls" class="auth-controls d-flex align-items-center gap-2 my-2 my-lg-0">
@@ -58,7 +62,7 @@ class SiteNavbar extends HTMLElement {
         `;
   }
   renderAuthControls() {
-    const authControls = this.querySelector('#authControls');
+    const authControls = this.querySelector("#authControls");
 
     // Initialize with invisible placeholder to maintain layout space
     authControls.innerHTML = `<div class="btn btn-outline-light" style="visibility: hidden; min-width: 80px;">Log out</div>`;
@@ -68,8 +72,8 @@ class SiteNavbar extends HTMLElement {
       if (user) {
         updatedAuthControl = `<button class="btn btn-outline-light" id="signOutBtn" type="button" style="min-width: 80px;">Log out</button>`;
         authControls.innerHTML = updatedAuthControl;
-        const signOutBtn = authControls.querySelector('#signOutBtn');
-        signOutBtn?.addEventListener('click', logoutUser);
+        const signOutBtn = authControls.querySelector("#signOutBtn");
+        signOutBtn?.addEventListener("click", logoutUser);
       } else {
         updatedAuthControl = `<a class="btn btn-outline-light" id="loginBtn" href="/login.html" style="min-width: 80px;">Log in</a>`;
         authControls.innerHTML = updatedAuthControl;
@@ -78,4 +82,4 @@ class SiteNavbar extends HTMLElement {
   }
 }
 
-customElements.define('site-navbar', SiteNavbar);
+customElements.define("site-navbar", SiteNavbar);

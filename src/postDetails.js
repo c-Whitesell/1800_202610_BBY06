@@ -1,5 +1,5 @@
-import { db } from './firebaseConfig.js';
-import { auth } from './firebaseConfig.js';
+import { db } from "./firebaseConfig.js";
+import { auth } from "./firebaseConfig.js";
 import {
   doc,
   getDoc,
@@ -16,36 +16,36 @@ import * as bootstrap from "bootstrap";
 
 function getPostId() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('id');
+  return params.get("id");
 }
 
 // Update stars visually
 function updateStarsUI(rating) {
-  const stars = document.querySelectorAll('#ratingContainer .star');
+  const stars = document.querySelectorAll("#ratingContainer .star");
   stars.forEach((star) => {
     star.textContent =
-      Number(star.dataset.value) <= rating ? 'star' : 'star_outline';
+      Number(star.dataset.value) <= rating ? "star" : "star_outline";
   });
 }
 
 // load post
 async function loadPost() {
   const postId = getPostId();
-  console.log('Post ID:', postId);
+  console.log("Post ID:", postId);
 
-  const docRef = doc(db, 'posts', postId);
+  const docRef = doc(db, "posts", postId);
   const docSnap = await getDoc(docRef);
 
   const post = docSnap.data();
 
-  console.log('Image exists?', post.image?.length);
+  console.log("Image exists?", post.image?.length);
 
-  document.getElementById('title').innerText = post.foodTitle;
-  document.getElementById('description').innerText = post.description;
-  document.getElementById('tags').innerText = post.dietaryTags.join(', ');
+  document.getElementById("title").innerText = post.foodTitle;
+  document.getElementById("description").innerText = post.description;
+  document.getElementById("tags").innerText = post.dietaryTags.join(", ");
 
   if (post.image) {
-    document.getElementById('postImage').src =
+    document.getElementById("postImage").src =
       `data:image/*;base64,${post.image}`;
   }
 }
@@ -54,22 +54,22 @@ async function loadPost() {
 async function loadReviews() {
   const postId = getPostId();
 
-  const q = query(collection(db, 'reviews'), where('postID', '==', postId));
+  const q = query(collection(db, "reviews"), where("postID", "==", postId));
 
   const snapshot = await getDocs(q);
-  const container = document.getElementById('reviewsContainer');
+  const container = document.getElementById("reviewsContainer");
 
-  container.innerHTML = '';
+  container.innerHTML = "";
 
   let totalRating = 0;
   let count = 0;
 
   snapshot.forEach((docSnap) => {
     const review = docSnap.data();
-    const reviewId = docSnap.id; 
+    const reviewId = docSnap.id;
 
-    const div = document.createElement('div');
-    div.className = 'border rounded p-2 mb-2';
+    const div = document.createElement("div");
+    div.className = "border rounded p-2 mb-2";
 
     const rating = review.rating ?? 0;
 
@@ -100,8 +100,8 @@ async function loadReviews() {
   });
 
   const avgRating = count > 0 ? (totalRating / count).toFixed(1) : 0;
-  document.getElementById('avgRating').textContent =
-    count > 0 ? `Average Rating: ${avgRating} / 5` : 'No ratings yet';
+  document.getElementById("avgRating").textContent =
+    count > 0 ? `Average Rating: ${avgRating} / 5` : "No ratings yet";
 }
 
 // add review
@@ -117,16 +117,16 @@ async function addReview(e) {
   const postId = getPostId();
 
   if (!user) {
-    alert('You must be logged in');
+    alert("You must be logged in");
     return;
   }
 
   if (!text && rating === 0) {
-    alert('Please add a review or select a rating.');
+    alert("Please add a review or select a rating.");
     return;
   }
 
-  await addDoc(collection(db, 'reviews'), {
+  await addDoc(collection(db, "reviews"), {
     text: text,
     userID: user.uid,
     postID: postId,
@@ -134,29 +134,35 @@ async function addReview(e) {
     createdAt: serverTimestamp(),
   });
 
-  alert('Review added!');
-  document.getElementById('reviewForm').reset();
+  document.getElementById("reviewForm").reset();
   updateStarsUI(0); // reset stars
   loadReviews();
+
+  const modal = new bootstrap.Modal(
+    document.getElementById("reviewSuccessModal"),
+  );
+  modal.show();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+let reviewToDelete = null;
+
+document.addEventListener("DOMContentLoaded", () => {
   loadPost();
   loadReviews();
 
-  document.getElementById('reviewForm').addEventListener('submit', addReview);
+  document.getElementById("reviewForm").addEventListener("submit", addReview);
 
   // handle star clicks
-  const stars = document.querySelectorAll('#ratingContainer .star');
+  const stars = document.querySelectorAll("#ratingContainer .star");
   stars.forEach((star) => {
-    star.addEventListener('click', () => {
+    star.addEventListener("click", () => {
       const ratingValue = Number(star.dataset.value);
 
       // update selected class
       stars.forEach((s) => {
-        s.classList.remove('selected');
+        s.classList.remove("selected");
         if (Number(s.dataset.value) <= ratingValue) {
-          s.classList.add('selected');
+          s.classList.add("selected");
         }
       });
 
@@ -166,22 +172,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Delete Handler
-  document
-    .getElementById("reviewsContainer")
-    .addEventListener("click", async (e) => {
-      if (e.target.classList.contains("delete-review")) {
-        const reviewId = e.target.dataset.id;
+  document.getElementById("reviewsContainer").addEventListener("click", (e) => {
+    const btn = e.target.closest(".delete-review");
 
-        if (confirm("Delete this review?")) {
-          await deleteDoc(doc(db, "reviews", reviewId));
-          loadReviews();
-        }
-      }
+    if (btn) {
+      reviewToDelete = btn.dataset.id;
+
+      const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+      modal.show();
+    }
+  });
+
+  document
+    .getElementById("confirmDelete")
+    .addEventListener("click", async () => {
+      if (!reviewToDelete) return;
+
+      await deleteDoc(doc(db, "reviews", reviewToDelete));
+
+      reviewToDelete = null;
+
+      const modalEl = document.getElementById("deleteModal");
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+
+      loadReviews();
     });
 });
 
 function showAlert(message) {
-  const container = document.getElementById('alertContainer');
+  const container = document.getElementById("alertContainer");
 
   container.innerHTML = `
     <div class="alert alert-success alert-dismissible fade show" role="alert">
