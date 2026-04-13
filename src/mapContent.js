@@ -198,7 +198,7 @@ L.Control.FavouritesButton = L.Control.extend({
     container.style.backgroundColor = "#87A878";
     container.style.color = "white";
     L.DomEvent.on(container, "click", function (e) {
-      window.location.href = "/favourite.html";
+      window.location.href = "/allRestaurants.html";
       L.DomEvent.stop(e);
     });
     L.DomEvent.disableClickPropagation(container);
