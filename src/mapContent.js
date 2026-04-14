@@ -51,7 +51,7 @@ var altdIcon = L.icon({
   iconAnchor: [22, 42], // point of the icon which will correspond to marker's location
 });
 
-var gfdIcon = L.icon({
+var gfIcon = L.icon({
   iconUrl: icon5,
   iconSize: [44, 44], // size of the icon
   iconAnchor: [22, 42], // point of the icon which will correspond to marker's location
