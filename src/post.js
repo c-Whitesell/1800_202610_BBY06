@@ -2,6 +2,7 @@ import { db } from "./firebaseConfig.js";
 import { auth } from "./firebaseConfig.js";
 import {
   doc,
+  documentId,
   getDoc,
   collection,
   addDoc,
@@ -11,6 +12,7 @@ import {
   where, // <--- Add this
   limit, // <--- Add this
   getDocs, // <--- You'll need this to actually run the query
+  updateDoc,
 } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
 import { createSearchMap, searchTextFirebaseCollection } from "./search.js";
@@ -79,6 +81,20 @@ function getCurrentPositionSafe() {
   });
 }
 
+function getSelectedDietary() {
+  // 1. Get the elements
+  const checkboxNodes = document.querySelectorAll(
+    'input[name="dietary"]:checked',
+  );
+
+  // 2. Convert to an array of values (Strings)
+  const selectedValues = Array.from(checkboxNodes).map((cb) => cb.value);
+
+  console.log("Found these values:", selectedValues);
+  return selectedValues;
+}
+window.getSelectedDietary = getSelectedDietary;
+
 async function addPost() {
   console.log("Inside add post");
 
@@ -96,12 +112,11 @@ async function addPost() {
   const longitude = window.selectedLon || null;
 
   // Collect selected checkboxes
-  const dietaryTags = [];
+  //const dietaryTags = [];
   const checkboxes = document.querySelectorAll('input[name="dietary"]:checked');
-
-  checkboxes.forEach((cb) => {
-    dietaryTags.push(cb.value);
-  });
+  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
+  const dietaryTags = selectedValues;
+  //console.log("Found these values:", dietaryTags);
 
   // Log collected data for verification
   console.log("Collected food data:");
@@ -163,7 +178,7 @@ async function addPost() {
 
       const doesRestaurantExist = query(
         collection(db, "restaurants"),
-        where("name", "==", restaurantTitle),
+        where(documentId(), "==", window.selectedRestaurantId),
         limit(1),
       );
 
@@ -422,6 +437,8 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             searchInput.value = item.name;
             window.selectedRestaurantId = item.id;
+            window.selectedAddress = item.address;
+            autocomplete.setValue(window.selectedAddress);
             container.style.display = "none";
           });
 
