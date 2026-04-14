@@ -135,17 +135,20 @@ function renderPosts(posts) {
   <div class="card-body">
     <h5 class="card-title">${post.foodTitle}</h5>
     <p class="card-text">${post.description}</p>
+    <p class="card-text"></p>
+    <p class="card-text"><b>${post.restuarant}</b></p>
+    <p class="card-text"><i>${post.location}</i></p>
 
-    <p class="mb-2">${starsHTML}</p>
+    <!--<p class="mb-2">${starsHTML}</p>-->
 
     <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
   </div>
 
-  <div class="card-footer bg-transparent border-0">
+  <!-- <div class="card-footer bg-transparent border-0">
     <button class="btn bg-info w-100" onclick="viewPost('${post.id}')">
       View Details
     </button>
-  </div>
+  </div> -->
 
 </div>
     `;
