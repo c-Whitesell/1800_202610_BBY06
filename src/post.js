@@ -57,6 +57,7 @@ function uploadImage() {
         var base64String = e.target.result.split(",")[1]; // Extract Base64 data
 
         // Save to localStorage for now until Post is submitted
+        localStorage.removeItem("inputImage"); // Force clear old data
         localStorage.setItem("inputImage", base64String);
         console.log("Image saved to localStorage as Base64 string.");
       };
@@ -455,4 +456,54 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+});
+
+// --- New logic to handle URL parameters and auto-fill ---
+async function checkURLParams() {
+  const tempUrlParams = new URLSearchParams(window.location.search);
+
+  if (tempUrlParams.has("id")) {
+    const restaurantId = tempUrlParams.get("id");
+    window.selectedRestaurantId = restaurantId;
+
+    try {
+      // 1. Fetch the document from Firestore
+      const docRef = doc(db, "restaurants", restaurantId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        // 2. Auto-fill the Restaurant Name field
+        const restaurantInput = document.getElementById("restaurant");
+        if (restaurantInput) {
+          restaurantInput.value = data.name || "";
+        }
+
+        // 3. Auto-fill the Address field (Geoapify)
+        if (data.address) {
+          window.selectedAddress = data.address;
+          // Geoapify specific method to set display text
+          if (autocomplete) {
+            autocomplete.setValue(data.address);
+          }
+        }
+
+        // 4. Update Lat/Lon for the post creation logic
+        window.selectedLat = data.lat || null;
+        window.selectedLon = data.lon || null;
+
+        console.log("Form auto-filled from URL ID:", data.name);
+      } else {
+        console.warn("No restaurant found with that ID.");
+      }
+    } catch (error) {
+      console.error("Error fetching restaurant for auto-fill:", error);
+    }
+  }
+}
+
+// Call this function when the DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  checkURLParams();
 });

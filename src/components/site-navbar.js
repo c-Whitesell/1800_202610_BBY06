@@ -2,6 +2,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { logoutUser } from "../authentication";
 
+import thisLogo from "/images/salad.png";
+
 class SiteNavbar extends HTMLElement {
   constructor() {
     super();
@@ -16,7 +18,7 @@ class SiteNavbar extends HTMLElement {
           <div class="container-fluid">
 
             <a class="navbar-brand" href="/">
-              <img src="/images/salad.png" height="36">
+              <img src="${thisLogo}" height="36">
                 Thoughtful Food
             </a>
 
