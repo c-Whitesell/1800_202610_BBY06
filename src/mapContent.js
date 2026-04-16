@@ -26,6 +26,7 @@ import icon2 from "/images/vegicon.png";
 import icon3 from "/images/veganicon.png";
 import icon4 from "/images/altdicon.png";
 import icon5 from "/images/gficon.png";
+import icon6 from "/images/manicon.png";
 
 var defaultIcon = L.icon({
   iconUrl: icon1,
@@ -53,6 +54,12 @@ var altdIcon = L.icon({
 
 var gfIcon = L.icon({
   iconUrl: icon5,
+  iconSize: [44, 44], // size of the icon
+  iconAnchor: [22, 42], // point of the icon which will correspond to marker's location
+});
+
+var locIcon = L.icon({
+  iconUrl: icon6,
   iconSize: [44, 44], // size of the icon
   iconAnchor: [22, 42], // point of the icon which will correspond to marker's location
 });
@@ -179,7 +186,7 @@ function onLocationFound(e) {
   userLat = e.latlng.lat;
   userLng = e.latlng.lng;
 
-  L.marker(e.latlng).addTo(map);
+  L.marker(e.latlng, { icon: locIcon }).addTo(map);
   L.circle(e.latlng, radius).addTo(map);
   map.flyTo([userLat, userLng], 16);
 }
