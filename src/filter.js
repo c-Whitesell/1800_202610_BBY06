@@ -1,4 +1,10 @@
-//function for combined queries to firestore
+/**
+ * FILE: filter.js
+ * DESCRIPTION: Contains function for building complex Firestore queries.
+ * Handles dynamic filtering based on dietary tags and references across collections.
+ * AUTHOR: BBY-06 team
+ * DATE: 2026-04-17
+ */
 import {
   and,
   doc,
@@ -10,7 +16,19 @@ import {
   limit,
 } from "firebase/firestore";
 
-//function for combined query, using dietary tags as well as an array of ids from another firestore document from another collection
+/**
+ * DESCRIPTION: Constructs a Firestore Query using dietary tags as well as
+ * an array of ids from another firestore document from another collection.
+ * DATABASE ACCESS: READ (Fetches reference document if otherDocField is provided).
+ * @param {Firestore} db - The Firestore database instance.
+ * @param {string} thisCollection - The primary collection to query (e.g., "posts").
+ * @param {Array<string>} activeFilters - List of dietary tags to filter by.
+ * @param {number} docLimit - Maximum number of documents to return.
+ * @param {string} [otherCollection] - Optional collection name to fetch ID restrictions.
+ * @param {string} [otherDocId] - Optional document ID within the other collection.
+ * @param {string} [otherDocField] - Optional field name which contains the array of IDs.
+ * @returns {Promise<Query>} - A compiled Firestore Query object.
+ */
 export async function multiQuery(
   db,
   thisCollection,

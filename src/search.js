@@ -1,8 +1,17 @@
-//Has functions for creating soundex for a string and creating a searchmap from soundex data
-//Reference: https://code.build/p/firestore-fuzzy-full-text-search-Ut2Smh?ref=dailydev
+/**
+ * FILE: search.js
+ * DESCRIPTION: Has functions for creating soundex for a string and creating a searchmap from soundex data
+ * AUTHOR: BBY-06 Team
+ * REFERENCE: https://code.build/p/firestore-fuzzy-full-text-search-Ut2Smh?ref=dailydev
+ */
 import { db } from "./firebaseConfig.js";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-// Take any string, and return the soundex
+
+/**
+ * DESCRIPTION: Take a string word, and return the soundex code
+ * @param {string} s - The input word string to convert.
+ * @returns {string} - The Soundex code string.
+ */
 export function soundex(s) {
   const a = s.toLowerCase().split("");
   const f = a.shift();
@@ -43,6 +52,14 @@ export function soundex(s) {
   return (r + "000").slice(0, 4).toUpperCase();
 }
 
+/**
+ * DESCRIPTION: Breaks text into n-grams, converts them to Soundex, and builds
+ * a frequency based search map for Firestore indexing.
+ * @param {string} text - The raw text to index (e.g., Restaurant Name).
+ * @param {number} weight - Multiplier for relevance ranking.
+ * @param {Object} m - Existing search map to append to (optional).
+ * @returns {Object} - The search map.
+ */
 export function createSearchMap(text, weight = 1, m) {
   const NUMBER_OF_WORDS = 3; //limit of words for search-map
 
@@ -105,6 +122,14 @@ export function createSearchMap(text, weight = 1, m) {
   return m;
 }
 
+/**
+ * DESCRIPTION: Performs a search against a Firestore collection using
+ * the search map field of the document.
+ * DATABASE ACCESS: QUERY (Collection filtered and ordered by search map match)
+ * @param {string} text - The user's search query.
+ * @param {string} collectionName - The Firestore collection to search (e.g., "restaurants").
+ * @returns {Promise<Array>} - Resolves to an array of document data objects.
+ */
 export async function searchTextFirebaseCollection(text, collectionName) {
   // Convert search text to soundex
   const searchText = text

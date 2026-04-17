@@ -1,4 +1,10 @@
-//This is the javascript for the map in main page
+/**
+ * FILE: mapContent.js
+ * DESCRIPTION: Contains the Leaflet map interface, geolocation,
+ * restaurant markers, and dynamic filtering by dietary tags and user favorites.
+ * AUTHOR: BBY-06 Team
+ * DATE: 2026-04-17
+ */
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import "./styles/style.css";
@@ -58,7 +64,12 @@ var locIcon = L.icon({
   iconAnchor: [22, 42], // point of the icon which will correspond to marker's location
 });
 
-//Fetch the user's favorite restuarant from firestore
+/**
+ * DESCRIPTION: Fetches the user's favorite list from Firestore.
+ * DATABASE ACCESS: READ (Users collection)
+ * @param {string} uid - The user's ID.
+ * @returns {Promise<Array>} - Array of restaurant IDs.
+ */
 async function getUserFavorites(uid) {
   const userRef = doc(db, "users", uid);
 
@@ -123,7 +134,11 @@ loadFilteredMarkers();
 //set map zoom
 map.locate({ setView: true, maxZoom: 16 });
 
-//to do when user location is found
+/**
+ * DESCRIPTION: Callback function for Leaflet 'locationfound' event (user location is found).
+ * Updates latitude and longitude then adds a user marker.
+ * @param {Object} e - The location event object containing coordinates and accuracy.
+ */
 function onLocationFound(e) {
   var radius = e.accuracy;
   //update user lat and long
@@ -220,7 +235,10 @@ L.Control.FavouritesButton = L.Control.extend({
 let favouritesButton = new L.Control.FavouritesButton();
 favouritesButton.addTo(map);
 
-//clear markers from the map
+/**
+ * DESCRIPTION: clears markers from the map instance.
+ * @returns {void}
+ */
 function clearMarkers() {
   currentMarkers.forEach((marker) => map.removeLayer(marker));
   currentMarkers = [];
@@ -229,7 +247,11 @@ function clearMarkers() {
 //import multipquery function
 import { multiQuery } from "./filter.js";
 
-//load markers by query
+/**
+ * DESCRIPTION: Queries Firestore for restaurants and renders markers on the map.
+ * DATABASE ACCESS: QUERY (Restaurants collection)
+ * @returns {Promise<void>}
+ */
 async function loadFilteredMarkers() {
   //clear old markers
   clearMarkers();
@@ -326,13 +348,20 @@ async function loadFilteredMarkers() {
   });
 }
 
-//dietary tag filter dropdown
+/**
+ * DESCRIPTION: Toggles the visibility of the dietary filter dropdown menu.
+ * @returns {void}
+ */
 window.toggleDropdown = function () {
   const dropdown = document.getElementById("filterDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 };
 
-//dietary tag filter check/uncheck logic
+/**
+ * DESCRIPTION: Handles checkbox status change to update active filters.
+ * @param {HTMLInputElement} checkbox - The checkbox element being toggled.
+ * @returns {Promise<void>}
+ */
 window.handleFilterChange = async function (checkbox) {
   const tag = checkbox.value;
 
@@ -347,7 +376,10 @@ window.handleFilterChange = async function (checkbox) {
   await loadFilteredMarkers();
 };
 
-//dietary tag filter clear checkboxes
+/**
+ * DESCRIPTION: Resets all active filters and clears filter checkboxes.
+ * @returns {Promise<void>}
+ */
 window.clearFilters = async function () {
   activeFilters = [];
 

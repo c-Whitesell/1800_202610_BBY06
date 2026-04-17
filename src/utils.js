@@ -1,5 +1,18 @@
-// Pop-up Loader
+/**
+ * FILE: utils.js
+ * DESCRIPTION: Provides utility functions for UI components,
+ * Has function to make iframe-based pop-up on page.
+ * AUTHOR: BBY-06 Team
+ * DATE: 2026-04-17
+ */
 
+/**
+ * DESCRIPTION: Creates and injects an iframe popup into a target element.
+ * Includes logic to auto-close the popup if the iframe redirects.
+ * @param {HTMLElement} element - The parent container where the popup will be appended.
+ * @param {string} location - The URL/path to be loaded within the iframe.
+ * @returns {void}
+ */
 export function createIframePopup(element, location) {
   //Close existing pop-up on page
   closeIframePopup();
@@ -39,7 +52,10 @@ export function createIframePopup(element, location) {
   element.appendChild(theIframeContainer);
 }
 
-// fuction to close pop-up
+/**
+ * DESCRIPTION: Searches the DOM for the active popup by ID and removes it if present.
+ * @returns {void}
+ */
 function closeIframePopup() {
   const popUp = document.getElementById("active-pop-up");
   if (popUp) {

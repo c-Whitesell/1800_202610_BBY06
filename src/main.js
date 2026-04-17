@@ -1,4 +1,10 @@
-//main page javascript
+/**
+ * FILE: main.js
+ * DESCRIPTION: Handles the primary landing page logic, and has
+ * real-time restaurant search autocomplete functionality.
+ * AUTHOR: BBY-06 Team
+ * DATE: 2026-04-17
+ */
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import { searchTextFirebaseCollection } from "./search.js";
@@ -46,7 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     });
 
-    //Build the dropdown HTML
+    /**
+     * DESCRIPTION: Dynamically builds the HTML list items for the search dropdown.
+     * @param {Array<Object>} data - Array of restaurant data.
+     * @param {HTMLElement} container - The <ul> element where results are injected.
+     * @returns {void}
+     */
     function renderResults(data, container) {
       container.innerHTML = ""; // Clear old results
 
