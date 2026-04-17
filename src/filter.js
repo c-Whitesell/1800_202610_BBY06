@@ -1,53 +1,16 @@
+//function for combined queries to firestore
 import {
   and,
-  or,
   doc,
-  getDocs,
   collection,
-  addDoc,
-  serverTimestamp,
   query,
-  orderBy,
   getDoc,
   where,
   documentId,
-  onSnapshot,
   limit,
 } from "firebase/firestore";
-import { db } from "./firebaseConfig.js";
 
-//queries firestore for posts matching the tags.
-//this is faster than if the client side logic was handling the filtering.i
-
-export async function fetchPostsByTags(query, activeFilters, getAverageRating) {
-  let q;
-
-  if (activeFilters.length === 0) {
-    q = query(collection(db, "posts"));
-  } else {
-    q = query(
-      collection(db, "posts"),
-      where("dietaryTags", "array-contains-any", activeFilters),
-    );
-  }
-
-  const snapshot = await getDocs(q);
-
-  const posts = [];
-
-  for (const docSnap of snapshot.docs) {
-    const post = docSnap.data();
-
-    /*     posts.push({
-      ...post,
-      id: docSnap.id,
-      avgRating: await getAverageRating(docSnap.id),
-    }); */
-  }
-
-  return posts;
-}
-
+//function for combined query, using dietary tags as well as an array of ids from another firestore document from another collection
 export async function multiQuery(
   db,
   thisCollection,
@@ -57,51 +20,56 @@ export async function multiQuery(
   otherDocId,
   otherDocField,
 ) {
-  const MAX_LIMIT = 99; // maximum number of items
+  const MAX_LIMIT = 999; // maximum number of items hardcoded
   if (docLimit === undefined || docLimit >= MAX_LIMIT) {
     docLimit = MAX_LIMIT;
   }
 
+  //check if using array from other firestore document/collection
   if (!(otherDocField === undefined)) {
     const otherDocRef = doc(db, otherCollection, otherDocId);
     const otherDocSnap = await getDoc(otherDocRef);
-
+    //if other doc exists, grab the array with ids
     if (otherDocSnap.exists()) {
       const docIdArray = otherDocSnap.get(otherDocField);
-      console.log("Getting document IDs");
-      console.log(docIdArray);
+      //create where() for part of query
       if (!docIdArray || docIdArray.length === 0) {
-        // Pass an array with a string that could never be a real ID
-        var whereOther = where(documentId(), "in", ["penis"]);
+        // Pass an array with a string that could never be a real ID (cant be empty)
+        var whereOther = where(documentId(), "in", ["qwerty"]);
       } else {
+        // Pass an array with ids
         var whereOther = where(documentId(), "in", docIdArray);
       }
     } else {
       // docSnap.data() will be undefined in this case
       console.log(
+        //error log
         `No such document for collection: ${otherCollection}, and id: ${otherDocId}, and field: ${otherDocField}!`,
       );
+      //empty where
       var whereOther;
     }
+    //empty where
     var whereOther;
   }
 
+  //create where() for dietary tags if they exist
   if (activeFilters.length === 0 || activeFilters == null) {
+    //empty where
     var whereTags;
   } else {
+    //create where() for dietary tags
     var whereTags = where("dietaryTags", "array-contains-any", activeFilters);
   }
 
-  // 1. Define your potential filters
+  //put wheres in an array, remove invalid/empty because of errors
   const filters = [whereOther, whereTags].filter(
     (f) => f !== undefined && f !== null,
   );
-  //console.log(filters);
-  // 2. Apply the query
-  // Note: If filters.length is 0, you might want to fetch all docs
-  // or skip the and() entirely.
+
+  // create query for the collection with the above where statements
   const collectionRef = collection(db, thisCollection);
   const q = query(collectionRef, and(...filters), limit(docLimit));
-  //console.log(query);
+  //returns the query
   return q;
 }

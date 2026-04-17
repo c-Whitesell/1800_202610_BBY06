@@ -1,18 +1,18 @@
+//main page javascript
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import { db } from "./firebaseConfig.js";
-import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
-import { auth } from "/src/firebaseConfig.js";
 import { searchTextFirebaseCollection } from "./search.js";
 
-// If you have custom global styles, import them as well:
+// import style css
 import "./styles/style.css";
 
+//Creates search bar for restaurants in main page
 document.addEventListener("DOMContentLoaded", () => {
+  //checks if search bar is loaded
   const searchInput = document.querySelector(".search-floating-wrapper input");
   const searchWrapper = document.querySelector(".search-floating-wrapper");
   if (searchWrapper && searchInput) {
-    // 1. Create the Results Dropdown element
+    //Create the Results Dropdown element
     const resultsDropdown = document.createElement("ul");
     resultsDropdown.className = "dropdown-menu shadow border-0 mt-2 w-100";
     resultsDropdown.style.display = "none"; // Hidden by default
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let debounceTimer;
 
-    // 2. Listen for typing
+    //Listen for user typing into search bar
     searchInput.addEventListener("input", (e) => {
       const queryText = e.target.value.trim();
 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     });
 
-    // 3. Function to build the dropdown HTML
+    //Build the dropdown HTML
     function renderResults(data, container) {
       container.innerHTML = ""; // Clear old results
 
@@ -64,18 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         
                     </a>
                 `;
-          // <div>
-          //             <div class="fw-bold">${item.foodTitle}</div>
-          //             <small class="text-muted">${item.location || "Unknown Location"}</small>
-          //         </div>
-          //<span class="badge rounded-pill bg-success">$${item.price}</span>
           container.appendChild(li);
         });
       }
       container.style.display = "block";
     }
 
-    // 4. Close dropdown when clicking outside
+    //Close dropdown when clicking outside of it
     document.addEventListener("click", (e) => {
       if (!searchWrapper.contains(e.target)) {
         resultsDropdown.style.display = "none";

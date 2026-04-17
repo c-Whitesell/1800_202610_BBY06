@@ -1,16 +1,17 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { logoutUser } from "../authentication";
-
+//need to pass image this way to inner html for vite to build properly
 import thisLogo from "/images/salad.png";
 
+//defines site top-nav-bar to keep same across all pages
 class SiteNavbar extends HTMLElement {
   constructor() {
     super();
     this.renderNavbar();
     this.renderAuthControls();
   }
-
+  //html of navbar-has logo/title and hamburger menu items
   renderNavbar() {
     this.innerHTML = `
        <!-- Navbar: single source of truth -->
@@ -66,7 +67,7 @@ class SiteNavbar extends HTMLElement {
 
     // Initialize with invisible placeholder to maintain layout space
     authControls.innerHTML = `<div class="btn btn-outline-light" style="visibility: hidden; min-width: 80px;">Log out</div>`;
-
+    //user authentication determines what type of log-in/log-out button shows in navbar
     onAuthStateChanged(auth, (user) => {
       let updatedAuthControl;
       if (user) {

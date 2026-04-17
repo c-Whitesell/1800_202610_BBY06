@@ -1,69 +1,43 @@
+//This is for the page that shows all posts as cards, or posts of specific restaurant
 import { db } from "./firebaseConfig.js";
-import { auth } from "./firebaseConfig.js";
 import {
   doc,
   getDoc,
   getDocs,
   collection,
-  addDoc,
-  serverTimestamp,
   query,
-  orderBy,
   where,
 } from "firebase/firestore";
-import * as bootstrap from "bootstrap";
-import { fetchPostsByTags, multiQuery } from "./filter.js";
+import { multiQuery } from "./filter.js";
 let activeFilters = [];
 
-// Calculate the average rating for each post
-async function getAverageRating(postId) {
-  const q = query(collection(db, "reviews"), where("postID", "==", postId));
-
-  const snapshot = await getDocs(q);
-
-  let total = 0;
-  let count = 0;
-
-  snapshot.forEach((doc) => {
-    const r = doc.data().rating ?? 0;
-    total += r;
-    count++;
-  });
-
-  if (count === 0) return 0;
-
-  return total / count;
-}
-
+//Load the posts
 async function loadPosts() {
-  //const posts = await fetchPostsByTags(activeFilters, getAverageRating);
-  console.log(getURLQueryType());
-  console.log(getURLId());
+  //Check if this page is for a specific restaurant
   if (getURLQueryType() == "restaurants") {
-    //changing page title
-    // 1. Create a reference to the specific document
+    //Create a reference to the url document id
     const docRef = doc(db, getURLQueryType(), getURLId());
-    // 2. Fetch the document snapshot
+    //Fetch the document snapshot
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      // 3. Extract only the specific fields you need
+      //Extract restaurant data for titles
       const data = docSnap.data();
       const rest_name = data.name;
       const rest_adress = data.address;
       console.log(rest_name);
       console.log(rest_adress);
-      // 1. Select the existing H2
+      //Change Title to restaurant name
       const titleElement = document.getElementById("page-title");
-      // 2. Change the text of the H2
       titleElement.textContent = rest_name;
-      // 3. Create and insert the H3 right after the H2
+      //Add restaurant address
       const addressElement = document.createElement("h3");
       addressElement.textContent = rest_adress;
       titleElement.after(addressElement);
     } else {
+      //restaurant doesn't exist for id
       console.log("No such restaurant found!");
     }
-
+    //query for posts by restaurant id and dietary tags
     var thisQuery = await multiQuery(
       db,
       "posts",
@@ -74,22 +48,24 @@ async function loadPosts() {
       "posts",
     );
   } else {
+    //query for posts by dietary tags only
     var thisQuery = await multiQuery(db, "posts", activeFilters);
   }
 
+  //get query snapshot
   const snapshot = await getDocs(thisQuery);
 
   const posts = [];
-
+  //add posts to post array
   for (const docSnap of snapshot.docs) {
     const post = docSnap.data();
 
     posts.push({
       ...post,
       id: docSnap.id,
-      avgRating: await getAverageRating(docSnap.id),
     });
   }
+  //render posts
   renderPosts(posts);
 }
 
@@ -97,28 +73,15 @@ window.viewPost = function (id) {
   window.location.href = `postDetails.html?id=${id}`;
 };
 
+//loads posts when document finshes loaading
 document.addEventListener("DOMContentLoaded", loadPosts());
 
-// div.querySelector('.favourite-btn').addEventListener('click', (e) => {
-//   const icon = e.currentTarget.querySelector('.material-icons');
-//   icon.textContent =
-//     icon.textContent === 'favorite_border' ? 'favorite' : 'favorite_border';
-// });
-
+//renders posts from array of post data
 function renderPosts(posts) {
   const container = document.getElementById("postsContainer");
   container.innerHTML = "";
-
+  //creates HTML for each post card
   for (const post of posts) {
-    let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-      starsHTML += `
-        <span class="material-icons text-dark" style="font-size: 20px">
-          ${i <= Math.round(post.avgRating) ? "star" : "star_outline"}
-        </span>
-      `;
-    }
-
     const div = document.createElement("div");
     div.className = "col-12 col-md-6 col-lg-4 mb-4";
     div.id = "card_${post.id}";
@@ -139,40 +102,33 @@ function renderPosts(posts) {
     <p class="card-text"><b>${post.restuarant}</b></p>
     <p class="card-text"><i>${post.location}</i></p>
 
-    <!--<p class="mb-2">${starsHTML}</p>-->
-
     <p class="text-muted"><strong>Tags:</strong> ${post.dietaryTags.join(", ")}</p>
   </div>
-
-  <!-- <div class="card-footer bg-transparent border-0">
-    <button class="btn bg-info w-100" onclick="viewPost('${post.id}')">
-      View Details
-    </button>
-  </div> -->
-
 </div>
     `;
-
+    //adds html post card to post container
     container.appendChild(div);
   }
 }
 
-//
+//adds/removes dietary tag if in-active/active
 window.toggleFilter = async function (tag) {
   if (activeFilters.includes(tag)) {
     activeFilters = activeFilters.filter((t) => t !== tag);
   } else {
     activeFilters.push(tag);
   }
-
-  await loadPosts(); // re-fetch from Firestore with filters
+  // re-fetch posts from Firestore with filters
+  await loadPosts();
 };
 
+//dietary tag filter checkbox dropdown
 window.toggleDropdown = function () {
   const dropdown = document.getElementById("filterDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 };
 
+//dietary tag filter checkboxes, adds/removes tag if checked/unchecked
 window.handleFilterChange = async function (checkbox) {
   const tag = checkbox.value;
 
@@ -183,10 +139,11 @@ window.handleFilterChange = async function (checkbox) {
   } else {
     activeFilters = activeFilters.filter((t) => t !== tag);
   }
-
+  // re-fetch posts from Firestore with filters
   await loadPosts();
 };
 
+// clear filter button
 window.clearFilters = async function () {
   activeFilters = [];
 
@@ -194,7 +151,7 @@ window.clearFilters = async function () {
   document
     .querySelectorAll("#filterDropdown input[type='checkbox']")
     .forEach((cb) => (cb.checked = false));
-
+  // re-fetch posts from Firestore with filters
   await loadPosts();
 };
 
@@ -207,11 +164,13 @@ document.addEventListener("click", function (e) {
   }
 });
 
+//get URL parameter: id
 function getURLId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
+//get URL parameter: type
 function getURLQueryType() {
   const params = new URLSearchParams(window.location.search);
   return params.get("type");
