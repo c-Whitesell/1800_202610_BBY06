@@ -51,14 +51,14 @@ You will need to create the following collections:
 
 Environment Configuration
 
-Create a .env file in the root directory and populate it with your Firebase and Geoapify credentials:
-env
-VITE_FIREBASE_API_KEY="your_api_key"
-VITE_FIREBASE_AUTHDOMAIN="your://firebaseapp.com"
-VITE_FIREBASE_PROJECT_ID="your_project_id"
-VITE_FIREBASE_APP_ID="your_app_id"
+-Create a .env file in the root directory and populate it with your Firebase and Geoapify credentials:
+-env
+-VITE_FIREBASE_API_KEY="your_api_key"
+-VITE_FIREBASE_AUTHDOMAIN="your://firebaseapp.com"
+-VITE_FIREBASE_PROJECT_ID="your_project_id"
+-VITE_FIREBASE_APP_ID="your_app_id"
 
-VITE_GEOAPIFY_KEY="your_geoapify_api_key
+-VITE_GEOAPIFY_KEY="your_geoapify_api_key
 
 Once the application is running:
 
