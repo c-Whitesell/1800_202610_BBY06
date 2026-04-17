@@ -1,14 +1,9 @@
+//This is for the page that shows all restaurants as cards, or favorite restaurants of signed in user
 import { db } from "./firebaseConfig.js";
 import { auth } from "./firebaseConfig.js";
 import {
   doc,
   getDocs,
-  collection,
-  addDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-  where,
   getDoc,
   updateDoc,
   arrayUnion,
@@ -16,39 +11,19 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import * as bootstrap from "bootstrap";
-import { fetchPostsByTags, multiQuery } from "./filter.js";
+import { multiQuery } from "./filter.js";
 let activeFilters = [];
 
-// Calculate the average rating for each post
-async function getAverageRating(postId) {
-  const q = query(collection(db, "reviews"), where("postID", "==", postId));
-
-  const snapshot = await getDocs(q);
-
-  let total = 0;
-  let count = 0;
-
-  snapshot.forEach((doc) => {
-    const r = doc.data().rating ?? 0;
-    total += r;
-    count++;
-  });
-
-  if (count === 0) return 0;
-
-  return total / count;
-}
-
+//Fetch the user's favorite restuarant from firestore
 async function getUserFavorites(uid) {
   const userRef = doc(db, "users", uid);
 
   try {
-    // 2. Fetch the document snapshot
+    //Fetch the user document snapshot
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      // 3. Extract the 'favorites' field (default to empty array if it doesn't exist)
+      //Extract the 'favorites' field (empty array if it doesn't exist)
       const favorites = userSnap.data().favorites || [];
       console.log("User Favorites:", favorites);
       return favorites;
@@ -65,6 +40,7 @@ async function getUserFavorites(uid) {
 let uid;
 let username;
 let userFavorites = [];
+//Get user info on authentication and load posts
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     uid = user.uid;
@@ -77,19 +53,17 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+//Load restaurant cards
 async function loadPosts() {
-  //const posts = await fetchPostsByTags(activeFilters, getAverageRating);
-  //console.log(getURLQueryType());
-  //console.log(getURLId());
+  //check authentication
   const auth = getAuth();
-
+  //check if looking at favorites from url, and check if user id exists
   if (getURLQueryType() == "users" && uid != undefined) {
-    console.log(uid);
-    // 1. Select the existing H2
+    //Add username to title element
     const titleElement = document.getElementById("page-title");
-    // 2. Change the text of the H2
     titleElement.textContent = username + "'s Favorite Restaurants";
 
+    //query the users favorite restaurants with filters
     var thisQuery = await multiQuery(
       db,
       "restaurants",
@@ -100,13 +74,14 @@ async function loadPosts() {
       "favorites",
     );
   } else {
+    //query all restaurants with filters
     var thisQuery = await multiQuery(db, "restaurants", activeFilters, 30);
   }
-
+  //get snapshot
   const snapshot = await getDocs(thisQuery);
 
   const posts = [];
-
+  //add restaurant info to array
   for (const docSnap of snapshot.docs) {
     const post = docSnap.data();
 
@@ -114,25 +89,25 @@ async function loadPosts() {
       ...post,
       id: docSnap.id,
       fav: userFavorites.includes(docSnap.id),
-      //avgRating: await getAverageRating(docSnap.id),
     });
-
-    //console.log(posts);
   }
+  //render restaurant cards
   renderPosts(posts);
 }
 
+//lead to restaurant's post page
 window.viewPost = function (id) {
   window.location.href = `allPosts.html?id=${id}&type=restaurants`;
 };
 
+//toggle restaurant as user's favorite (icon)
 window.toggleFavorite = async (postId) => {
   const user = auth.currentUser;
   if (!user) {
     alert("Please log in to favorite posts!");
     return;
   }
-
+  //toggle restaurant as user's favorite in firestore
   const result = await toggleFavoriteLogic(user.uid, postId);
 
   const icon = document.querySelector(`#fav-${postId} span`);
@@ -144,28 +119,30 @@ window.toggleFavorite = async (postId) => {
   }
 };
 
+//toggle restaurant as user's favorite (firestore)
 async function toggleFavoriteLogic(uid, postId) {
   const userRef = doc(db, "users", uid);
   const userSnap = await getDoc(userRef);
 
-  // 1. If user doc doesn't exist, create it and add the favorite
+  //If user facorites field doesn't exist, create it and add the restaurant
   if (!userSnap.exists()) {
     await setDoc(userRef, { favorites: [postId] });
     return "added";
   }
 
+  //get user favorites
   const userData = userSnap.data();
   const favorites = userData.favorites || [];
 
-  // 2. Check if already favorited
+  //Check if already favorited
   if (favorites.includes(postId)) {
-    // Already exists -> Remove it
+    // Already exists: Remove restaurant
     await updateDoc(userRef, {
       favorites: arrayRemove(postId),
     });
     return "removed";
   } else {
-    // Doesn't exist -> Add it
+    // Doesn't exist: Add restaurant
     await updateDoc(userRef, {
       favorites: arrayUnion(postId),
     });
@@ -173,28 +150,16 @@ async function toggleFavoriteLogic(uid, postId) {
   }
 }
 
+//load posts on content load, sometimes happens after authentication
 document.addEventListener("DOMContentLoaded", loadPosts());
 
-// div.querySelector('.favourite-btn').addEventListener('click', (e) => {
-//   const icon = e.currentTarget.querySelector('.material-icons');
-//   icon.textContent =
-//     icon.textContent === 'favorite_border' ? 'favorite' : 'favorite_border';
-// });
-
+//renders restaurant cards
 function renderPosts(posts) {
   const container = document.getElementById("postsContainer");
   container.innerHTML = "";
 
+  //create HTML for each restaurant card
   for (const post of posts) {
-    /*     let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-      starsHTML += `
-        <span class="material-icons text-dark" style="font-size: 20px">
-          ${i <= Math.round(post.avgRating) ? "star" : "star_outline"}
-        </span>
-      `;
-    } */
-
     const div = document.createElement("div");
     div.className = "col-12 col-md-6 col-lg-4 mb-4";
     div.id = "card_${post.id}";
@@ -230,12 +195,12 @@ function renderPosts(posts) {
 
 </div>
     `;
-
+    //add restaurant card to container
     container.appendChild(div);
   }
 }
 
-//
+//adds/removes dietary tag if in-active/active
 window.toggleFilter = async function (tag) {
   if (activeFilters.includes(tag)) {
     activeFilters = activeFilters.filter((t) => t !== tag);
@@ -246,11 +211,13 @@ window.toggleFilter = async function (tag) {
   await loadPosts(); // re-fetch from Firestore with filters
 };
 
+//dietary tag filter checkbox dropdown
 window.toggleDropdown = function () {
   const dropdown = document.getElementById("filterDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 };
 
+//dietary tag filter checkboxes, adds/removes tag if checked/unchecked
 window.handleFilterChange = async function (checkbox) {
   const tag = checkbox.value;
 
@@ -261,10 +228,11 @@ window.handleFilterChange = async function (checkbox) {
   } else {
     activeFilters = activeFilters.filter((t) => t !== tag);
   }
-
+  // re-fetch posts from Firestore with filters
   await loadPosts();
 };
 
+// clear filter button
 window.clearFilters = async function () {
   activeFilters = [];
 
@@ -273,7 +241,7 @@ window.clearFilters = async function () {
     .querySelectorAll("#filterDropdown input[type='checkbox']")
     .forEach((cb) => (cb.checked = false));
 
-  await loadPosts();
+  await loadPosts(); // re-fetch posts from Firestore with filters
 };
 
 //Closes filter drop down if doc is clicked
@@ -285,11 +253,13 @@ document.addEventListener("click", function (e) {
   }
 });
 
+//get URL parameter: id
 function getURLId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
+//get URL parameter: type
 function getURLQueryType() {
   const params = new URLSearchParams(window.location.search);
   return params.get("type");

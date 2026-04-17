@@ -1,14 +1,7 @@
+//Has functions for creating soundex for a string and creating a searchmap from soundex data
+//Reference: https://code.build/p/firestore-fuzzy-full-text-search-Ut2Smh?ref=dailydev
 import { db } from "./firebaseConfig.js";
-import {
-  addDoc,
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-} from "firebase/firestore";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 // Take any string, and return the soundex
 export function soundex(s) {
   const a = s.toLowerCase().split("");
@@ -51,14 +44,14 @@ export function soundex(s) {
 }
 
 export function createSearchMap(text, weight = 1, m) {
-  const NUMBER_OF_WORDS = 3;
+  const NUMBER_OF_WORDS = 3; //limit of words for search-map
 
   // regex matches any alphanumeric from any language and strips spaces
   const finalArray = [];
 
   const wordArray = text
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, " ") // Keeps letters and numbers from any script
+    .replace(/[^\p{L}\p{N}]+/gu, " ") // Keeps letters and numbers only
     .replace(/ +/g, " ") // Collapses multiple spaces into one
     .trim() // Removes leading/trailing whitespace
     .split(" ");
@@ -67,7 +60,7 @@ export function createSearchMap(text, weight = 1, m) {
   if (wordArray.length === 1 && wordArray[0] === "") return [];
 
   do {
-    // Take a slice of the first N words (e.g., 4)
+    // Take a slice of the first N words
     finalArray.push(wordArray.slice(0, NUMBER_OF_WORDS).join(" "));
 
     // Remove the first word to "slide" the window forward
@@ -90,9 +83,9 @@ export function createSearchMap(text, weight = 1, m) {
 
   index = temp;
   if (typeof m !== "undefined" && m !== null) {
-    // The variable exists and is not null
+    // searchmap exists
   } else {
-    // It doesn't exist yet, so initialize it
+    // searchmap doesn't exist, initialize it
     var m = {};
   }
   // Add each iteration from the createIndex
@@ -104,8 +97,7 @@ export function createSearchMap(text, weight = 1, m) {
         const r = t.shift();
         v += v ? " " + r : r;
 
-        // Increment for relevance
-        // Using the logical OR operator is a clean way to handle undefined keys
+        // Increment for relevance by weight(importance)
         m[v] = (m[v] || 0) + 1 * weight;
       }
     }
@@ -114,17 +106,17 @@ export function createSearchMap(text, weight = 1, m) {
 }
 
 export async function searchTextFirebaseCollection(text, collectionName) {
-  // Convert search text to phonetic code
+  // Convert search text to soundex
   const searchText = text
     .trim()
     .split(" ")
     .map((v) => soundex(v))
     .join(" ");
 
-  // Query Firestore: Order by the specific phonetic key, highest frequency first
+  // Query Firestore: Order by the soundex, highest frequency first
   const q = query(
     collection(db, collectionName),
-    orderBy(`searchArray.${searchText}`, "desc"), // Note: using 'searchArray' to match your post.js
+    orderBy(`searchArray.${searchText}`, "desc"),
     limit(5),
   );
 

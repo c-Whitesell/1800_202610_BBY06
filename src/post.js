@@ -8,10 +8,10 @@ import {
   addDoc,
   serverTimestamp,
   arrayUnion,
-  query, // <--- Add this
-  where, // <--- Add this
-  limit, // <--- Add this
-  getDocs, // <--- You'll need this to actually run the query
+  query,
+  where,
+  limit,
+  getDocs,
   updateDoc,
 } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
@@ -19,10 +19,7 @@ import { createSearchMap, searchTextFirebaseCollection } from "./search.js";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 
 //------------------------------------------------------------
-// This function is an Event Listener for the file (image) picker
-// When an image is chosen, it will display image for preview,
-// read it from file system, encode, strip meta data,
-// then save that image.
+//Reads uploaded image and converts it to Base64 string saved in local storage
 //-------------------------------------------------------------
 function uploadImage() {
   // Attach event listener to the file input
@@ -66,14 +63,13 @@ function uploadImage() {
 }
 
 //------------------------------------------------------------
-// This function gets the current geolocation position safely.
-// It returns a Promise that resolves to the position or null if
-// geolocation is not available or permission is denied.
-//-------------------------------------------------------------
+// Reads the current geolocation position.
+//------------------------------------------------------------
 function getCurrentPositionSafe() {
   return new Promise((resolve) => {
+    // Returns null if geolocation is not available or permission is denied.
     if (!navigator.geolocation) return resolve(null);
-
+    // Returns a Promise that resolves to the position
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve(pos),
       () => resolve(null),
@@ -82,13 +78,17 @@ function getCurrentPositionSafe() {
   });
 }
 
+//------------------------------------------------------------
+// gets the selected dietary tags information
+//------------------------------------------------------------
 function getSelectedDietary() {
-  // 1. Get the elements
+  //Get the checbox elements
   const checkboxNodes = document.querySelectorAll(
+    //html check boxes should have name="dietary"
     'input[name="dietary"]:checked',
   );
 
-  // 2. Convert to an array of values (Strings)
+  //Convert to an array of Strings
   const selectedValues = Array.from(checkboxNodes).map((cb) => cb.value);
 
   console.log("Found these values:", selectedValues);
@@ -96,10 +96,11 @@ function getSelectedDietary() {
 }
 window.getSelectedDietary = getSelectedDietary;
 
+//------------------------------------------------------------
+// Adds the post to firestore with form data
+//------------------------------------------------------------
 async function addPost() {
-  console.log("Inside add post");
-
-  // 🧾 Collect form data
+  //  Collect form data
   const restaurantTitle = document.getElementById("restaurant").value;
   const foodTitle = document.getElementById("title").value;
   const foodPrice = document.getElementById("price").value;
@@ -157,7 +158,6 @@ async function addPost() {
         searchstring,
       );
       //Save Post to Firestore
-
       const docRef = await addDoc(collection(db, "posts"), {
         foodTitle: foodTitle,
         restuarant: restaurantTitle,
@@ -176,28 +176,28 @@ async function addPost() {
       });
 
       const foodDocID = docRef.id;
-
-      const doesRestaurantExist = query(
-        collection(db, "restaurants"),
-        where(documentId(), "==", window.selectedRestaurantId),
-        limit(1),
+      //gets restaurant docsnap if restaurant exists
+      const docRef2 = doc(
+        db,
+        "restaurants",
+        !(window.selectedRestaurantId == null)
+          ? window.selectedRestaurantId
+          : "qwerty",
       );
+      const doesRestaurant = await getDoc(docRef);
 
       try {
-        // 3. Execute the query
-        const querySnapshot = await getDocs(doesRestaurantExist);
-
-        // 4. Return true if the snapshot is not empty
-        if (!querySnapshot.empty) {
-          console.log(`Match found! Doc ID: ${querySnapshot.docs[0].id}`);
-          const docRef2 = doc(db, "restaurants", querySnapshot.docs[0].id);
+        //Return true if the snapshot is not empty
+        if (doesRestaurant.exists) {
+          //update existing restaurant with dietary tags and new info
           await updateDoc(docRef2, {
             name: restaurantTitle,
-            dietaryTags: arrayUnion(...dietaryTags), // add dietary tags ...spreadsArray
-            posts: arrayUnion(foodDocID), // add post ID
+            dietaryTags: arrayUnion(...dietaryTags), // add dietary tags ... spreads array
+            posts: arrayUnion(foodDocID), // add post ID to retaurant
             lastUpdated: serverTimestamp(),
           });
           const docSnap2 = await getDoc(docRef);
+          //updates search string for restaurant
           var searchstring2 = createSearchMap(restaurantTitle, 10);
           searchstring2 = createSearchMap(
             docSnap2.get("address"),
@@ -212,22 +212,24 @@ async function addPost() {
             lastUpdated: serverTimestamp(),
           });
         } else {
+          //if restaurant doesn't exist, create new one
+          //creates search string
           var searchstring2 = createSearchMap(restaurantTitle, 10);
           searchstring2 = createSearchMap(foodLocation, 3, searchstring2);
           dietaryTags.forEach((dtag) => {
             searchstring2 = createSearchMap(dtag, 2, searchstring2);
           });
 
-          //
-          const docRef2 = await addDoc(collection(db, "restaurants"), {
+          //add restaurant to firestore collection
+          docRef2 = await addDoc(collection(db, "restaurants"), {
             address: foodLocation,
             cuisine: "unknown",
             lat: latitude,
             lon: longitude,
             name: restaurantTitle,
             website: "",
-            dietaryTags: dietaryTags, // Initializing as empty array
-            posts: [foodDocID], // Initializing as empty array
+            dietaryTags: dietaryTags, //add current tags
+            posts: [foodDocID], //add post to restaurant
             createdAt: serverTimestamp(),
             lastUpdated: serverTimestamp(),
             searchArray: searchstring2,
@@ -242,7 +244,7 @@ async function addPost() {
       const thankYouModal = new bootstrap.Modal(thankYouModalEl);
       thankYouModal.show();
 
-      // Redirect AFTER user closes the modal
+      // Redirect after user closes the modal
       thankYouModalEl.addEventListener(
         "hidden.bs.modal",
         () => {
@@ -251,11 +253,12 @@ async function addPost() {
         { once: true },
       );
     } catch (error) {
+      //error logging
       console.error("Error adding review:", error);
     }
   } else {
+    //if there is no user
     console.log("No user is signed in");
-    //window.location.href = "review.html";
   }
 }
 
@@ -275,8 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// GEOAPIFY auto complete
-
+// GEOAPIFY location auto complete initialization
 const apiKey = import.meta.env.VITE_GEOAPIFY_KEY;
 const autocomplete = new GeocoderAutocomplete(
   document.getElementById("autocomplete"),
@@ -284,7 +286,7 @@ const autocomplete = new GeocoderAutocomplete(
   {},
 );
 const initGeoapify = () => {
-  // Check all 3 common places the library hides
+  // I had a lot of trouble initializing GEOAPIFY so these are some checks/retries
   const Geocoder =
     (window.geoapify && window.geoapify.GeocoderAutocomplete) ||
     (window.autocomplete && window.autocomplete.GeocoderAutocomplete) ||
@@ -301,6 +303,7 @@ const initGeoapify = () => {
   console.log("✅ Library found! Initializing...");
   const apiKey = import.meta.env.VITE_GEOAPIFY_KEY;
 
+  // adds automcomplete to location entry bar
   const autocomplete = new Geocoder(
     document.getElementById("autocomplete"),
     apiKey,
@@ -316,43 +319,47 @@ const initGeoapify = () => {
   // ... selection logic ...
 };
 
+// when user selects location search bar
 autocomplete.on("select", (location) => {
-  // 1. Check if the user cleared the input (location will be null)
+  // Check if the user cleared the input
   if (!location) {
     console.log("Selection cleared");
+    // make lat and long null if no location
     window.selectedLat = null;
     window.selectedLon = null;
     return;
   }
 
-  // 2. Extract properties and coordinates
+  //Extract properties and coordinates
   const address = location.properties.formatted;
   const lon = location.geometry.coordinates[0]; // Longitude is first
   const lat = location.geometry.coordinates[1]; // Latitude is second
 
-  // 3. Safety Check: Ensure the API actually returned numbers
+  //Check that API returned lat and lon
   if (lat != null && lon != null) {
     console.log("✅ Valid Location Data Received:");
     console.log("Address:", address);
     console.log(`GPS: ${lat}, ${lon}`);
 
-    // 4. Save to global variables for your 'addPost' function
+    //Save to global variables for addPost
     window.selectedAddress = address;
     window.selectedLat = lat;
     window.selectedLon = lon;
   } else {
+    //error log
     console.error("The selected location is missing GPS coordinates.");
   }
 });
 
-//reatuarant autocomplete
+//restuarant autocomplete
 document.addEventListener("DOMContentLoaded", () => {
+  //add restuarant autocomplete to restaurant entry form
   const searchInput = document.getElementById("restaurant");
   const searchWrapper = searchInput ? searchInput.parentElement : null;
-
+  //If the search bar/wrapper has loaded, add autocomplete
   if (searchWrapper && searchInput) {
     searchWrapper.style.position = "relative";
-
+    //creates dropdown list
     const resultsDropdown = document.createElement("ul");
     resultsDropdown.className = "dropdown-menu shadow border-0 mt-1 w-100";
     resultsDropdown.style.display = "none";
@@ -362,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let debounceTimer;
 
-    // Toggle logic: If the menu is open, clicking the input again closes it
+    // If the menu is open, clicking the input again closes it
     searchInput.addEventListener("click", () => {
       if (resultsDropdown.style.display === "block") {
         resultsDropdown.style.display = "none";
@@ -372,17 +379,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // event listener for text input
     searchInput.addEventListener("input", (e) => {
       const queryText = e.target.value.trim();
       clearTimeout(debounceTimer);
 
       if (queryText.length < 2) {
         resultsDropdown.style.display = "none";
-        // Reset ID if user clears search
+        // Reset restaurant ID if user clears search
         window.selectedRestaurantId = null;
         return;
       }
 
+      // wait to refresh autocomplete, after detecting input text changing
       debounceTimer = setTimeout(async () => {
         try {
           const results = await searchTextFirebaseCollection(
@@ -396,10 +405,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     });
 
+    //render autocomplete results
     function renderResults(data, container) {
       container.innerHTML = "";
 
-      // 1. Always show the current input as a "New Restaurant" option at the top
+      //Show the current input as New Restaurant option at the top
       const currentInput = searchInput.value.trim();
       const newLi = document.createElement("li");
       newLi.innerHTML = `
@@ -408,20 +418,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     <small class="text-secondary">New Restaurant</small>
                 </a>
             `;
+      //checks if new restaurant option is clicked
       newLi.addEventListener("click", (e) => {
         e.preventDefault();
         searchInput.value = currentInput;
-        window.selectedRestaurantId = null; // Signal this is new
+        window.selectedRestaurantId = null; // removes restaurant id from window because it doesn't exist
         container.style.display = "none";
       });
       container.appendChild(newLi);
 
-      // 2. Add divider if there are existing results
+      //Adds divider if there are existing results
       if (data.length > 0) {
         const divider = document.createElement("li");
         divider.innerHTML = `<hr class="dropdown-divider">`;
         container.appendChild(divider);
-
+        //Adds autocomplete results, restaurant name and address
         data.forEach((item) => {
           const li = document.createElement("li");
           li.innerHTML = `
@@ -433,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <small class="text-muted">Existing</small>
                         </a>
                     `;
-
+          //Checks if this restaurant autocomplete option is clicked
           li.addEventListener("click", (e) => {
             e.preventDefault();
             searchInput.value = item.name;
@@ -450,6 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
       container.style.display = "block";
     }
 
+    //Clicking outside autocomplete dropdown removes it
     document.addEventListener("click", (e) => {
       if (!searchWrapper.contains(e.target)) {
         resultsDropdown.style.display = "none";
@@ -458,46 +470,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// --- New logic to handle URL parameters and auto-fill ---
+//Add restaurant info from URL parameter (add new post to restaurant from map)
 async function checkURLParams() {
+  //get url parameters
   const tempUrlParams = new URLSearchParams(window.location.search);
-
+  //check url for restaurant id
   if (tempUrlParams.has("id")) {
     const restaurantId = tempUrlParams.get("id");
     window.selectedRestaurantId = restaurantId;
 
     try {
-      // 1. Fetch the document from Firestore
+      //Fetch the restaurant document from Firestore
       const docRef = doc(db, "restaurants", restaurantId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
 
-        // 2. Auto-fill the Restaurant Name field
+        //Auto-fill the Restaurant Name field
         const restaurantInput = document.getElementById("restaurant");
         if (restaurantInput) {
           restaurantInput.value = data.name || "";
         }
 
-        // 3. Auto-fill the Address field (Geoapify)
+        //Auto-fill the Address field (Geoapify)
         if (data.address) {
           window.selectedAddress = data.address;
-          // Geoapify specific method to set display text
+          // Geoapify method to set adress in bar
           if (autocomplete) {
             autocomplete.setValue(data.address);
           }
         }
 
-        // 4. Update Lat/Lon for the post creation logic
+        //Update Lat/Lon for the post creation info
         window.selectedLat = data.lat || null;
         window.selectedLon = data.lon || null;
 
         console.log("Form auto-filled from URL ID:", data.name);
       } else {
+        //log no restaurant found
         console.warn("No restaurant found with that ID.");
       }
     } catch (error) {
+      //log error
       console.error("Error fetching restaurant for auto-fill:", error);
     }
   }
@@ -505,5 +520,6 @@ async function checkURLParams() {
 
 // Call this function when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-  checkURLParams();
+  checkURLParams(); // Check URL parameters
+  localStorage.removeItem("inputImage"); // Force clear image data on refresh
 });
