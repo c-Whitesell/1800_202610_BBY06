@@ -1,3 +1,11 @@
+/**
+ * FILE: post.js
+ * DESCRIPTION: Handles the creation of new food posts.
+ * Manages image uploads,geolocation, address autocomplete via Geoapify,
+ * and Firestore collection updates.
+ * AUTHOR: BBY-06 Team
+ * DATE: 2026-04-17
+ */
 import { db } from "./firebaseConfig.js";
 import { auth } from "./firebaseConfig.js";
 import {
@@ -18,9 +26,10 @@ import * as bootstrap from "bootstrap";
 import { createSearchMap, searchTextFirebaseCollection } from "./search.js";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 
-//------------------------------------------------------------
-//Reads uploaded image and converts it to Base64 string saved in local storage
-//-------------------------------------------------------------
+/**
+ * DESCRIPTION: Initializes listeners for image upload and handles Base64 encoding for local storage.
+ * @returns {void}
+ */
 function uploadImage() {
   // Attach event listener to the file input
   // Function to handle file selection and Base64 encoding
@@ -62,9 +71,10 @@ function uploadImage() {
   }
 }
 
-//------------------------------------------------------------
-// Reads the current geolocation position.
-//------------------------------------------------------------
+/**
+ * DESCRIPTION: Requests the user's current GPS coordinates using the Browser API.
+ * @returns {Promise<Position|null>} - Resolves to the position object or null if unavailable.
+ */
 function getCurrentPositionSafe() {
   return new Promise((resolve) => {
     // Returns null if geolocation is not available or permission is denied.
@@ -78,9 +88,10 @@ function getCurrentPositionSafe() {
   });
 }
 
-//------------------------------------------------------------
-// gets the selected dietary tags information
-//------------------------------------------------------------
+/**
+ * DESCRIPTION: Queries the DOM for all checked dietary restriction checkboxes.
+ * @returns {Array<string>} - An array of strings representing selected dietary tags.
+ */
 function getSelectedDietary() {
   //Get the checbox elements
   const checkboxNodes = document.querySelectorAll(
@@ -96,9 +107,11 @@ function getSelectedDietary() {
 }
 window.getSelectedDietary = getSelectedDietary;
 
-//------------------------------------------------------------
-// Adds the post to firestore with form data
-//------------------------------------------------------------
+/**
+ * DESCRIPTION: Collects form data, generates search indexes, and writes new documents to Firestore.
+ * DATABASE ACCESS: WRITE (Posts collection), READ/WRITE (Restaurants collection)
+ * @returns {Promise<void>}
+ */
 async function addPost() {
   //  Collect form data
   const restaurantTitle = document.getElementById("restaurant").value;
@@ -405,7 +418,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     });
 
-    //render autocomplete results
+    /**
+     * DESCRIPTION: Builds and displays the autocomplete dropdown menu.
+     * @param {Array} data - The array of restaurant objects from Firestore.
+     * @param {HTMLElement} container - The UL element used for the dropdown.
+     * @returns {void}
+     */
     function renderResults(data, container) {
       container.innerHTML = "";
 
@@ -470,7 +488,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-//Add restaurant info from URL parameter (add new post to restaurant from map)
+/**
+ * DESCRIPTION: Checks URL parameters for a restaurant ID to pre-fill the form.
+ * DATABASE ACCESS: READ (Restaurants collection)
+ * @returns {Promise<void>}
+ */
 async function checkURLParams() {
   //get url parameters
   const tempUrlParams = new URLSearchParams(window.location.search);

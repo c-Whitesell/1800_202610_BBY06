@@ -1,4 +1,10 @@
-//This is for the page that shows all posts as cards, or posts of specific restaurant
+/**
+ * FILE: allPosts.js
+ * DESCRIPTION: Handles fetching and rendering of food posts from Firestore.
+ * Supports filtering by dietary tags and by specific restaurant.
+ * AUTHOR: BBY-06 team
+ * DATE: 2026-04-17
+ */
 import { db } from "./firebaseConfig.js";
 import {
   doc,
@@ -11,7 +17,12 @@ import {
 import { multiQuery } from "./filter.js";
 let activeFilters = [];
 
-//Load the posts
+/**
+ * DESCRIPTION: Fetches posts from Firestore based on current URL parameters and active filters.
+ * DATABASE ACCESS: READ (Restaurant doc), QUERY (Posts collection)
+ * @param: None
+ * @returns {Promise<void>}: Async function that triggers UI rendering
+ */
 async function loadPosts() {
   //Check if this page is for a specific restaurant
   if (getURLQueryType() == "restaurants") {
@@ -69,6 +80,11 @@ async function loadPosts() {
   renderPosts(posts);
 }
 
+/**
+ * DESCRIPTION: Navigates the user to the detailed view of a specific post.
+ * @param {string} id - The Firestore document ID of the post.
+ * @returns {void}
+ */
 window.viewPost = function (id) {
   window.location.href = `postDetails.html?id=${id}`;
 };
@@ -76,7 +92,11 @@ window.viewPost = function (id) {
 //loads posts when document finshes loaading
 document.addEventListener("DOMContentLoaded", loadPosts());
 
-//renders posts from array of post data
+/**
+ * DESCRIPTION: Generates HTML cards for each post and adds them into the DOM.
+ * @param {Array<Object>} posts - Array of post objects from Firestore.
+ * @returns {void}
+ */
 function renderPosts(posts) {
   const container = document.getElementById("postsContainer");
   container.innerHTML = "";
@@ -84,7 +104,7 @@ function renderPosts(posts) {
   for (const post of posts) {
     const div = document.createElement("div");
     div.className = "col-12 col-md-6 col-lg-4 mb-4";
-    div.id = "card_${post.id}";
+    div.id = `card_${post.id}`;
 
     div.innerHTML = `
 <div class="card h-100 shadow-sm">
@@ -111,7 +131,11 @@ function renderPosts(posts) {
   }
 }
 
-//adds/removes dietary tag if in-active/active
+/**
+ * DESCRIPTION: Adds or removes a tag from the activeFilters array and reloads posts.
+ * @param {string} tag - The dietary tag to toggle.
+ * @returns {Promise<void>}
+ */
 window.toggleFilter = async function (tag) {
   if (activeFilters.includes(tag)) {
     activeFilters = activeFilters.filter((t) => t !== tag);
@@ -122,13 +146,20 @@ window.toggleFilter = async function (tag) {
   await loadPosts();
 };
 
-//dietary tag filter checkbox dropdown
+/**
+ * DESCRIPTION: Toggles the visibility of the dietary filter dropdown menu.
+ * @returns {void}
+ */
 window.toggleDropdown = function () {
   const dropdown = document.getElementById("filterDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 };
 
-//dietary tag filter checkboxes, adds/removes tag if checked/unchecked
+/**
+ * DESCRIPTION: Handles checkbox status change to update active filters.
+ * @param {HTMLInputElement} checkbox - The checkbox element being toggled.
+ * @returns {Promise<void>}
+ */
 window.handleFilterChange = async function (checkbox) {
   const tag = checkbox.value;
 
@@ -143,7 +174,10 @@ window.handleFilterChange = async function (checkbox) {
   await loadPosts();
 };
 
-// clear filter button
+/**
+ * DESCRIPTION: Resets all active filters and clears filter checkboxes.
+ * @returns {Promise<void>}
+ */
 window.clearFilters = async function () {
   activeFilters = [];
 
@@ -155,7 +189,7 @@ window.clearFilters = async function () {
   await loadPosts();
 };
 
-//Closes filter drop down if doc is clicked
+//Closes filter drop down if clicked outside of it
 document.addEventListener("click", function (e) {
   const dropdown = document.getElementById("filterDropdown");
 
@@ -164,13 +198,19 @@ document.addEventListener("click", function (e) {
   }
 });
 
-//get URL parameter: id
+/**
+ * DESCRIPTION: get URL parameter: id
+ * @returns {string|null} - The ID found in the URL.
+ */
 function getURLId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
-//get URL parameter: type
+/**
+ * DESCRIPTION: get URL parameter: type
+ * @returns {string|null} - The query type found in the URL.
+ */
 function getURLQueryType() {
   const params = new URLSearchParams(window.location.search);
   return params.get("type");

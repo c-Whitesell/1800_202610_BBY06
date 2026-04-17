@@ -1,4 +1,10 @@
-//This is for the page that shows all restaurants as cards, or favorite restaurants of signed in user
+/**
+ * FILE: allRestaurants.js
+ * DESCRIPTION: Shows all restaurants as cards, or favorite restaurants of signed in user
+ * with filtering by dietary tags.
+ * AUTHOR: BBY-06 team
+ * DATE: 2026-04-17
+ */
 import { db } from "./firebaseConfig.js";
 import { auth } from "./firebaseConfig.js";
 import {
@@ -14,7 +20,12 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { multiQuery } from "./filter.js";
 let activeFilters = [];
 
-//Fetch the user's favorite restuarant from firestore
+/**
+ * DESCRIPTION: Retrieves the list of favorite restaurant IDs for a specific user.
+ * DATABASE ACCESS: READ (Users collection)
+ * @param {string} uid - The unique authentication ID of the user.
+ * @returns {Promise<Array>} - Resolves to an array of restaurant IDs.
+ */
 async function getUserFavorites(uid) {
   const userRef = doc(db, "users", uid);
 
@@ -53,7 +64,12 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-//Load restaurant cards
+/**
+ * DESCRIPTION: Fetches restaurant data from Firestore based on URL context and filters.
+ * and displays them as cards
+ * DATABASE ACCESS: QUERY (Restaurants collection)
+ * @returns {Promise<void>}
+ */
 async function loadPosts() {
   //check authentication
   const auth = getAuth();
@@ -95,12 +111,20 @@ async function loadPosts() {
   renderPosts(posts);
 }
 
-//lead to restaurant's post page
+/**
+ * DESCRIPTION: Redirects the browser to a restaurant's specific posts page.
+ * @param {string} id - Restaurant document ID.
+ * @returns {void}
+ */
 window.viewPost = function (id) {
   window.location.href = `allPosts.html?id=${id}&type=restaurants`;
 };
 
-//toggle restaurant as user's favorite (icon)
+/**
+ * DESCRIPTION: toggles the favorite button; updates UI icon and calls database logic.
+ * @param {string} postId - The ID of the restaurant being favorited.
+ * @returns {Promise<void>}
+ */
 window.toggleFavorite = async (postId) => {
   const user = auth.currentUser;
   if (!user) {
@@ -119,7 +143,14 @@ window.toggleFavorite = async (postId) => {
   }
 };
 
-//toggle restaurant as user's favorite (firestore)
+/**
+ * DESCRIPTION: The logic to add/remove a post ID from the favorites field
+ * in the users Firestore document.
+ * DATABASE ACCESS: READ (User doc), WRITE (Update/Set User doc)
+ * @param {string} uid - User ID.
+ * @param {string} postId - Restaurant ID.
+ * @returns {Promise<string>} - Returns "added" or "removed".
+ */
 async function toggleFavoriteLogic(uid, postId) {
   const userRef = doc(db, "users", uid);
   const userSnap = await getDoc(userRef);
@@ -153,7 +184,11 @@ async function toggleFavoriteLogic(uid, postId) {
 //load posts on content load, sometimes happens after authentication
 document.addEventListener("DOMContentLoaded", loadPosts());
 
-//renders restaurant cards
+/**
+ * DESCRIPTION: Adds restaurant cards into the DOM.
+ * @param {Array<Object>} posts - The list of restaurant objects to display.
+ * @returns {void}
+ */
 function renderPosts(posts) {
   const container = document.getElementById("postsContainer");
   container.innerHTML = "";
@@ -162,7 +197,7 @@ function renderPosts(posts) {
   for (const post of posts) {
     const div = document.createElement("div");
     div.className = "col-12 col-md-6 col-lg-4 mb-4";
-    div.id = "card_${post.id}";
+    div.id = `card_${post.id}`;
 
     div.innerHTML = `
 <div class="card h-100 shadow-sm">
@@ -200,7 +235,11 @@ function renderPosts(posts) {
   }
 }
 
-//adds/removes dietary tag if in-active/active
+/**
+ * DESCRIPTION: Adds or removes a tag from the activeFilters array and reloads posts.
+ * @param {string} tag - The dietary tag to toggle.
+ * @returns {Promise<void>}
+ */
 window.toggleFilter = async function (tag) {
   if (activeFilters.includes(tag)) {
     activeFilters = activeFilters.filter((t) => t !== tag);
@@ -211,13 +250,20 @@ window.toggleFilter = async function (tag) {
   await loadPosts(); // re-fetch from Firestore with filters
 };
 
-//dietary tag filter checkbox dropdown
+/**
+ * DESCRIPTION: Toggles the visibility of the dietary filter dropdown menu.
+ * @returns {void}
+ */
 window.toggleDropdown = function () {
   const dropdown = document.getElementById("filterDropdown");
   dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 };
 
-//dietary tag filter checkboxes, adds/removes tag if checked/unchecked
+/**
+ * DESCRIPTION: Handles checkbox status change to update active filters.
+ * @param {HTMLInputElement} checkbox - The checkbox element being toggled.
+ * @returns {Promise<void>}
+ */
 window.handleFilterChange = async function (checkbox) {
   const tag = checkbox.value;
 
@@ -232,7 +278,10 @@ window.handleFilterChange = async function (checkbox) {
   await loadPosts();
 };
 
-// clear filter button
+/**
+ * DESCRIPTION: Resets all active filters and clears filter checkboxes.
+ * @returns {Promise<void>}
+ */
 window.clearFilters = async function () {
   activeFilters = [];
 
@@ -244,7 +293,7 @@ window.clearFilters = async function () {
   await loadPosts(); // re-fetch posts from Firestore with filters
 };
 
-//Closes filter drop down if doc is clicked
+//Closes filter drop down if clicked outside of it
 document.addEventListener("click", function (e) {
   const dropdown = document.getElementById("filterDropdown");
 
@@ -253,13 +302,19 @@ document.addEventListener("click", function (e) {
   }
 });
 
-//get URL parameter: id
+/**
+ * DESCRIPTION: get URL parameter: id
+ * @returns {string|null} - The ID found in the URL.
+ */
 function getURLId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
-//get URL parameter: type
+/**
+ * DESCRIPTION: get URL parameter: type
+ * @returns {string|null} - The query type found in the URL.
+ */
 function getURLQueryType() {
   const params = new URLSearchParams(window.location.search);
   return params.get("type");

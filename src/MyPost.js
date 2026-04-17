@@ -1,3 +1,10 @@
+/**
+ * FILE: MyPost.js
+ * DESCRIPTION: Manages the user's posts page.
+ * Allows users to view, edit, and delete their own posts.
+ * AUTHOR: BBY-06 Team
+ * DATE: 2026-04-17
+ */
 import { db, auth } from "./firebaseConfig.js";
 import {
   collection,
@@ -23,7 +30,12 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-//Uses post info and Auth to show the currently logged in user their posts.
+/**
+ * DESCRIPTION: Fetches all post documents from Firestore that match the logged-in user's ID.
+ * DATABASE ACCESS: QUERY (Posts collection filtered by userID)
+ * @param {string} userId - The user ID of the authenticated user.
+ * @returns {Promise<void>}
+ */
 async function fetchUserPosts(userId) {
   const postsContainer = document.getElementById("posts-container");
   try {
@@ -46,8 +58,11 @@ async function fetchUserPosts(userId) {
   }
 }
 
-// Shows user their posts on the page
-// gives the user the ability to edit or delete a post from this page
+/**
+ * DESCRIPTION: Dynamically generates cards for each post and attaches event listeners for CRUD operations.
+ * @param {Array<Object>} posts - List of post objects retrieved from Firestore.
+ * @returns {void}
+ */
 function displayPostsOnPage(posts) {
   const postsContainer = document.getElementById("posts-container");
   if (!postsContainer) return;
@@ -191,7 +206,13 @@ function displayPostsOnPage(posts) {
   });
 }
 
-// Removes the post from Firestore and the DOM.
+/**
+ * DESCRIPTION: Removes the post from Firestore and the DOM.
+ * DATABASE ACCESS: WRITE (DeleteDoc)
+ * @param {string} postId - The document ID to remove.
+ * @param {HTMLElement} cardElement - The DOM element to remove upon success.
+ * @returns {Promise<void>}
+ */
 async function handleDelete(postId, cardElement) {
   if (!confirm("Delete this post?")) return;
   try {
