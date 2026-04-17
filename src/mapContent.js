@@ -238,8 +238,8 @@ async function loadFilteredMarkers() {
   const auth = getAuth();
 
   //get query for filtered restaurants
-  //limit to 50 restaurants in map for demo and because firebase limits
-  const queryLimit = 999;
+  //limit restaurants in map for demo and because firebase limits
+  const queryLimit = 123;
   if (favoritesOnly == true && uid != undefined) {
     //query the users favorite restaurants with filters
     var q = await multiQuery(
