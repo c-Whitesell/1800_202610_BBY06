@@ -20,7 +20,7 @@ export async function multiQuery(
   otherDocId,
   otherDocField,
 ) {
-  const MAX_LIMIT = 99; // maximum number of items hardcoded
+  const MAX_LIMIT = 999; // maximum number of items hardcoded
   if (docLimit === undefined || docLimit >= MAX_LIMIT) {
     docLimit = MAX_LIMIT;
   }
