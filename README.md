@@ -33,6 +33,33 @@ To run the application locally:
 3.  **Start the development server** by running the command: `npm run dev`.
 4.  Open your browser and visit the local address shown in your terminal (usually `http://localhost:5173` or similar).
 
+This project uses Firebase Firestore as its database. Follow these steps to set up your environment:
+
+Database Creation
+
+-Go to the Firebase Console and create a new project.
+-Navigate to Firestore Database and click Create Database.
+-Choose Production Mode (recommended) or Test Mode.
+-Select a location (e.g., us-central1) and click Enable.
+
+Collections Setup
+
+You will need to create the following collections:
+-users: To store user profile data.
+-restaurants: To restaurant location and details for the map.
+-posts: To store post data.
+
+Environment Configuration
+
+Create a .env file in the root directory and populate it with your Firebase and Geoapify credentials:
+env
+VITE_FIREBASE_API_KEY="your_api_key"
+VITE_FIREBASE_AUTHDOMAIN="your://firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="your_project_id"
+VITE_FIREBASE_APP_ID="your_app_id"
+
+VITE_GEOAPIFY_KEY="your_geoapify_api_key
+
 Once the application is running:
 
 1.  Create an account so you user information is saved 
