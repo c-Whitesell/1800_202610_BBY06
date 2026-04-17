@@ -35,21 +35,28 @@ To run the application locally:
 
 This project uses Firebase Firestore as its database. Follow these steps to set up your environment:
 
-Database Creation
+### Database Creation
 
 -Go to the Firebase Console and create a new project.
+
 -Navigate to Firestore Database and click Create Database.
+
 -Choose Production Mode (recommended) or Test Mode.
+
 -Select a location (e.g., us-central1) and click Enable.
 
-Collections Setup
+
+### Collections Setup
 
 You will need to create the following collections:
--users: To store user profile data.
--restaurants: To restaurant location and details for the map.
--posts: To store post data.
 
-Environment Configuration
+users: To store user profile data.
+
+restaurants: To restaurant location and details for the map.
+
+posts: To store post data.
+
+### Environment Configuration
 
 Create a .env file in the root directory and populate it with your Firebase and Geoapify credentials:
 env
