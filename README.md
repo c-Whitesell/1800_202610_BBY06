@@ -2,7 +2,7 @@
 
 ## Overview
 
-Thoughtful Food is a client side app that use firebase and firestore to help users find places to eat that can meet their dietary needs! This was a project for COMP 1800 at at BCIT.
+Thoughtful Food is a client-side app powered by Firebase and Firestore that leverages crowdsourced data to help users discover places to eat that meet their dietary needs! This was a project for COMP 1800 at at BCIT.
 
 ---
 
