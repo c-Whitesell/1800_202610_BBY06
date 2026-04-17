@@ -37,13 +37,10 @@ async function loadPosts() {
       const rest_adress = data.address;
       console.log(rest_name);
       console.log(rest_adress);
-      //Change Title to restaurant name
+      //Change Title to restaurant name and restaurant address
       const titleElement = document.getElementById("page-title");
-      titleElement.textContent = rest_name;
-      //Add restaurant address
-      const addressElement = document.createElement("h3");
-      addressElement.textContent = rest_adress;
-      titleElement.after(addressElement);
+      titleElement.innerHTML =
+        rest_name + `</br><small><i>` + rest_adress + `</i></small>`;
     } else {
       //restaurant doesn't exist for id
       console.log("No such restaurant found!");
